@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+}
+
+enum SplitMethod {
+  SHARES
+  EXACT
+}
+
+model User {
+  id        Int   @id @default(autoincrement())
+  email     String   @unique
+  name      String   
+  avatarUrl String?
+  
+  memberships Member[] 
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Group {
+  id        Int    @id @default(autoincrement())
+  name      String
+  description String?
+  shareCode String?   @unique
+  
+  members   Member[]
+  expenses  Expense[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Member {
+  id      Int    @id @default(autoincrement())
+  name    String
+
+  groupId Int
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  userId    Int?  
+  user      User?    @relation(fields: [userId], references: [id])
+  
+  payments    Payment[]
+  allocations Allocation[]
+
+  @@unique([groupId, userId])
+}
+
+model Expense {
+  id          Int    @id @default(autoincrement())
+  description String
+  amount      Float
+  date        DateTime
+  note        String?
+  groupId     Int
+  group       Group    @relation(fields: [groupId], references: [id])
+  splitMethod SplitMethod 
+
+  paidBy      Payment[]
+  allocations Allocation[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Payment {
+  id        Int    @id @default(autoincrement())
+  amount    Float
+  memberId  Int
+  member    Member  @relation(fields: [memberId], references: [id])
+  expenseId Int
+  expense   Expense @relation(fields: [expenseId], references: [id])
+}
+
+model Allocation {
+  id        Int    @id @default(autoincrement())
+  value     Float   
+  memberId  Int
+  member    Member  @relation(fields: [memberId], references: [id])
+  expenseId Int
+  expense   Expense @relation(fields: [expenseId], references: [id])
+}
