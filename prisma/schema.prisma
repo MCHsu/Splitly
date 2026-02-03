@@ -10,7 +10,7 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
 }
 
 enum SplitMethod {
@@ -19,77 +19,142 @@ enum SplitMethod {
 }
 
 model User {
-  id        Int   @id @default(autoincrement())
-  email     String   @unique
-  name      String   
-  avatarUrl String?
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String
+  memberships   Member[]
+  emailVerified Boolean   @default(false)
+  image         String?
   
-  memberships Member[] 
+  sessions      Session[]
+  accounts      Account[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 model Group {
-  id        Int    @id @default(autoincrement())
-  name      String
+  id          String    @id @default(cuid())
+  name        String
   description String?
-  shareCode String?   @unique
-  
-  members   Member[]
-  expenses  Expense[]
+  shareCode   String?   @unique @default(cuid())
+  members     Member[]
+  expenses    Expense[]
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Member {
-  id      Int    @id @default(autoincrement())
-  name    String
+  id          String    @id @default(cuid())
+  name        String
 
-  groupId Int
-  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId     String
+  group       Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
-  userId    Int?  
-  user      User?    @relation(fields: [userId], references: [id])
-  
+  userId      String?
+  user        User?        @relation(fields: [userId], references: [id])
+
   payments    Payment[]
   allocations Allocation[]
 
-  @@unique([groupId, userId])
+  // @@unique([groupId, userId])
+  @@index([groupId])
+  @@index([userId])
 }
 
 model Expense {
-  id          Int    @id @default(autoincrement())
+  id          String       @id @default(cuid())
   description String
-  amount      Float
+  amount      Int
   date        DateTime
   note        String?
-  groupId     Int
-  group       Group    @relation(fields: [groupId], references: [id])
-  splitMethod SplitMethod 
+
+  groupId     String
+  group       Group        @relation(fields: [groupId], references: [id])
+  
+  splitMethod SplitMethod
 
   paidBy      Payment[]
   allocations Allocation[]
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  createdById String
+
+  @@index([groupId])
 }
 
 model Payment {
-  id        Int    @id @default(autoincrement())
-  amount    Float
-  memberId  Int
+  id        String  @id @default(cuid())
+  amount    Int
+
+  memberId  String
   member    Member  @relation(fields: [memberId], references: [id])
-  expenseId Int
+
+  expenseId String
   expense   Expense @relation(fields: [expenseId], references: [id])
+
+  @@index([memberId])
+  @@index([expenseId])
 }
 
 model Allocation {
-  id        Int    @id @default(autoincrement())
-  value     Float   
-  memberId  Int
+  id        String  @id @default(cuid())
+  value     Int
+
+  memberId  String
   member    Member  @relation(fields: [memberId], references: [id])
-  expenseId Int
+  
+  expenseId String
   expense   Expense @relation(fields: [expenseId], references: [id])
+
+  @@index([memberId])
+  @@index([expenseId])
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
 }
