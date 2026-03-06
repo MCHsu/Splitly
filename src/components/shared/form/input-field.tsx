@@ -1,59 +1,50 @@
 "use client";
 
-import {
-  FieldValues,
-  Path,
-  useFormContext,
-  useController,
-} from "react-hook-form";
-import {
-  Field,
-  FieldLabel,
-  FieldDescription,
-  FieldError,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import React from "react";
+import { FieldValues, Path } from "react-hook-form";
 
-interface InputFieldProps<T extends FieldValues> {
-  key?: string;
+import { ControlledField } from "@/components/shared/form/controlled-field";
+import { BaseInput } from "@/components/shared/form//base-input";
+
+interface InputFieldProps<T extends FieldValues> extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "name" | "label" | "type"
+> {
   name: Path<T>;
-  label: string;
-  placeholder?: string;
+  label?: string;
   description?: string;
   type?: string;
-  disabled?: boolean;
+  className?: string;
   handleOnBlur?: () => void;
+  handleOnFocus?: () => void;
 }
+
 export const InputField = <T extends FieldValues>({
   name,
   label,
-  placeholder,
   description,
   type = "text",
-  disabled,
+  className,
   handleOnBlur = () => {},
+  handleOnFocus = () => {},
+  ...props
 }: InputFieldProps<T>) => {
-  const { control } = useFormContext();
-  const { field, fieldState } = useController({ name, control });
-
   return (
-    <Field data-invalid={fieldState.invalid}>
-      <FieldLabel htmlFor={name}>{label}</FieldLabel>
-      <Input
-        {...field}
-        id={name}
-        aria-invalid={fieldState.invalid}
-        placeholder={placeholder}
-        autoComplete="username"
-        type={type}
-        disabled={disabled}
-        onBlur={() => {
-          field.onBlur();
-          handleOnBlur();
-        }}
-      />
-      <FieldDescription>{description}</FieldDescription>
-      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-    </Field>
+    <ControlledField name={name} label={label} description={description}>
+      {(field) => (
+        <BaseInput
+          {...field}
+          {...props}
+          type={type}
+          onFocus={() => {
+            handleOnFocus();
+          }}
+          onBlur={() => {
+            field.onBlur();
+            handleOnBlur();
+          }}
+        />
+      )}
+    </ControlledField>
   );
 };
