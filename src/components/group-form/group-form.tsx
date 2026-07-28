@@ -1,29 +1,22 @@
 "use client";
 
-import { useForm, SubmitHandler, FormProvider } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import {
-  FieldDescription,
-  FieldGroup,
-  FieldLegend,
-  FieldSet,
-} from "@/components/ui/field";
+
+import { groupFormSchema, GroupFormData } from "@/lib/validations/group";
 import { InputField } from "@/components/shared/form/input-field";
-import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
-
-const groupFormSchema = z.object({
-  name: z.string().min(1, "Group Name is required"),
-  description: z.string().optional(),
-});
-
-type groupForm = z.infer<typeof groupFormSchema>;
+import { SelectField } from "@/components/shared/form/select-field";
+import { TextareaField } from "@/components/shared/form/textarea-field";
+import { FormLayout } from "@/components/shared/form/form-layout";
+import { SectionContainer } from "@/components/shared/section-container";
+import { createGroup } from "@/app/actions/group.action";
+import type { CurrencyItem } from "@/app/api/currencies/route";
 
 interface GroupFormProps {
   mode?: "add" | "edit";
-  defaultValues?: Partial<groupForm>;
-  onSubmit?: (data: groupForm) => void;
+  defaultValues?: Partial<GroupFormData>;
+  onSubmit?: (data: GroupFormData) => void | Promise<unknown>;
   onCancel?: () => void;
 }
 
@@ -33,7 +26,16 @@ export function GroupForm({
   onSubmit: onSubmitProp,
   onCancel,
 }: GroupFormProps) {
-  const methods = useForm<groupForm>({
+  const [currencies, setCurrencies] = useState<CurrencyItem[]>([]);
+
+  useEffect(() => {
+    fetch("/api/currencies")
+      .then((r) => r.json())
+      .then((data: CurrencyItem[]) => setCurrencies(data))
+      .catch(() => {});
+  }, []);
+
+  const methods = useForm<GroupFormData>({
     resolver: zodResolver(groupFormSchema),
     defaultValues: defaultValues || {
       name: "",
@@ -42,61 +44,54 @@ export function GroupForm({
   });
 
   const {
-    handleSubmit,
     formState: { isSubmitting },
   } = methods;
 
-  const actionText = mode === "edit" ? "Update Group" : "Create Group";
+  const actionText = mode === "edit" ? "Update" : "Create";
 
-  const onSubmit: SubmitHandler<groupForm> = (data) => {
+  const onSubmit: SubmitHandler<GroupFormData> = async (data) => {
     if (onSubmitProp) {
-      onSubmitProp(data);
-    } else {
-      console.log(data);
+      await onSubmitProp(data);
+      return;
     }
+
+    await createGroup(data);
   };
 
   return (
-    <div className="w-full max-w-md">
-      <FormProvider {...methods}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <FieldGroup>
-            <FieldSet>
-              <FieldLegend>
-                {mode === "edit" ? "Edit Group" : "Create New Group"}
-              </FieldLegend>
-              <FieldDescription>
-                All transactions are secure and encrypted
-              </FieldDescription>
-
-              <InputField
-                name="name"
-                label="Group Name"
-                placeholder="e.g. Summer Trip 2025"
-              />
-              <InputField
-                name="description"
-                label="Description"
-                placeholder="What is this group for?"
-              />
-            </FieldSet>
-          </FieldGroup>
-
-          <div className="mt-6 flex justify-center gap-4">
-            <Button type="button" variant="outline" onClick={onCancel}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting && <Spinner />}
-              {actionText}
-            </Button>
+    <SectionContainer>
+      <FormLayout methods={methods} onSubmit={onSubmit}>
+        <FormLayout.Section>
+          <div className="flex flex-col md:flex-row gap-4 md:gap-6 lg:gap-10">
+            <InputField
+              name="name"
+              label="Group Name"
+              placeholder="e.g. Summer Trip 2025"
+            />
+            <SelectField
+              name="currency"
+              label="Settlement Currency"
+              disabled={mode === "edit"}
+              options={currencies.map((c) => ({
+                value: c.code,
+                label: `${c.code} (${c.symbol})`,
+              }))}
+            />
           </div>
-        </form>
-      </FormProvider>
-    </div>
-  );
-}
 
-export function AddGroupForm() {
-  return <GroupForm mode="add" />;
+          <TextareaField
+            name="description"
+            label="Description"
+            placeholder="What is this group for?"
+          />
+        </FormLayout.Section>
+
+        <FormLayout.Actions
+          onCancel={onCancel}
+          submitText={actionText}
+          isSubmitting={isSubmitting}
+        />
+      </FormLayout>
+    </SectionContainer>
+  );
 }

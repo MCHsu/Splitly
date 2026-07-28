@@ -1,0 +1,424 @@
+"use server";
+
+import prisma from "@/lib/prisma";
+import { GroupMember } from "@/generated/prisma/client";
+import { revalidatePath, refresh } from "next/cache";
+import {
+  memberFormSchema,
+  MemberFormData,
+  joinGroupSchema,
+  addVirtualMemberSchema,
+} from "@/lib/validations/member";
+import { handleError } from "@/lib/utils";
+import { getCurrentUserId } from "@/app/actions/auth.action";
+import {
+  getMemberBalance,
+  getMemberExpenseCount,
+  getMemberSettlementCount,
+} from "@/lib/balance";
+
+type ActionResult = {
+  success: boolean;
+  error?: string;
+  groupId?: string;
+};
+
+async function getActiveMembership(groupId: string, userId: string) {
+  return prisma.groupMember.findFirst({
+    where: { groupId, userId, isActive: true },
+  });
+}
+
+async function requireActiveMembership(
+  groupId: string,
+  userId: string,
+): Promise<GroupMember | null> {
+  const membership = await getActiveMembership(groupId, userId);
+  return membership;
+}
+
+export async function joinGroup(
+  inviteCode: string,
+  displayName: string,
+): Promise<ActionResult> {
+  const validation = joinGroupSchema.safeParse({ inviteCode, displayName });
+
+  if (!validation.success) {
+    return { success: false, error: "Invalid input" };
+  }
+
+  const currentUserId = await getCurrentUserId();
+
+  if (!currentUserId) {
+    return { success: false, error: "You must be signed in to join a group" };
+  }
+
+  try {
+    const group = await prisma.group.findUnique({
+      where: { inviteCode: validation.data.inviteCode },
+      select: { id: true },
+    });
+
+    if (!group) {
+      return { success: false, error: "Invalid invite code" };
+    }
+
+    const existing = await prisma.groupMember.findFirst({
+      where: { groupId: group.id, userId: currentUserId },
+    });
+
+    if (existing) {
+      await prisma.groupMember.update({
+        where: { id: existing.id },
+        data: {
+          name: validation.data.displayName,
+          isActive: true,
+          updatedById: currentUserId,
+        },
+      });
+    } else {
+      await prisma.groupMember.create({
+        data: {
+          groupId: group.id,
+          userId: currentUserId,
+          name: validation.data.displayName,
+          role: "MEMBER",
+          isActive: true,
+          createdById: currentUserId,
+          updatedById: currentUserId,
+        },
+      });
+    }
+
+    revalidatePath(`/groups/${group.id}`);
+    revalidatePath("/groups");
+
+    return { success: true, groupId: group.id };
+  } catch (error) {
+    handleError(error);
+    return { success: false, error: "Failed to join group" };
+  }
+}
+
+export async function getGroupByInviteCode(inviteCode: string) {
+  try {
+    const group = await prisma.group.findUnique({
+      where: { inviteCode },
+      select: { id: true, name: true, inviteCode: true },
+    });
+
+    return group;
+  } catch (error) {
+    handleError(error);
+    return null;
+  }
+}
+
+export async function addVirtualMember(
+  groupId: string,
+  name: string,
+): Promise<ActionResult> {
+  const validation = addVirtualMemberSchema.safeParse({ groupId, name });
+
+  if (!validation.success) {
+    return { success: false, error: "Invalid input" };
+  }
+
+  const currentUserId = await getCurrentUserId();
+
+  if (!currentUserId) {
+    return { success: false, error: "You must be signed in" };
+  }
+
+  const membership = await requireActiveMembership(groupId, currentUserId);
+
+  if (!membership) {
+    return { success: false, error: "You are not an active member of this group" };
+  }
+
+  try {
+    await prisma.groupMember.create({
+      data: {
+        groupId,
+        userId: null,
+        name: validation.data.name,
+        role: "MEMBER",
+        isActive: true,
+        createdById: currentUserId,
+        updatedById: currentUserId,
+      },
+    });
+
+    revalidatePath(`/groups/${groupId}`);
+    refresh();
+
+    return { success: true, groupId };
+  } catch (error) {
+    handleError(error);
+    return { success: false, error: "Failed to add virtual member" };
+  }
+}
+
+export async function deleteMember(
+  groupId: string,
+  memberId: string,
+): Promise<ActionResult> {
+  const currentUserId = await getCurrentUserId();
+
+  if (!currentUserId) {
+    return { success: false, error: "You must be signed in" };
+  }
+
+  const membership = await requireActiveMembership(groupId, currentUserId);
+
+  if (!membership) {
+    return { success: false, error: "You are not an active member of this group" };
+  }
+
+  const target = await prisma.groupMember.findFirst({
+    where: { id: memberId, groupId },
+  });
+
+  if (!target) {
+    return { success: false, error: "Member not found" };
+  }
+
+  const expenseCount = await getMemberExpenseCount(memberId);
+  const settlementCount = await getMemberSettlementCount(memberId);
+
+  if (expenseCount > 0 || settlementCount > 0) {
+    return {
+      success: false,
+      error: "Cannot delete member with linked expenses or settlements",
+    };
+  }
+
+  try {
+    await prisma.groupMember.delete({ where: { id: memberId } });
+
+    revalidatePath(`/groups/${groupId}`);
+    refresh();
+
+    return { success: true, groupId };
+  } catch (error) {
+    handleError(error);
+    return { success: false, error: "Failed to delete member" };
+  }
+}
+
+export async function deactivateMember(
+  groupId: string,
+  memberId: string,
+): Promise<ActionResult> {
+  const currentUserId = await getCurrentUserId();
+
+  if (!currentUserId) {
+    return { success: false, error: "You must be signed in" };
+  }
+
+  const callerMembership = await requireActiveMembership(
+    groupId,
+    currentUserId,
+  );
+
+  if (!callerMembership || callerMembership.role !== "OWNER") {
+    return { success: false, error: "Only the group owner can deactivate members" };
+  }
+
+  const target = await prisma.groupMember.findFirst({
+    where: { id: memberId, groupId, isActive: true },
+  });
+
+  if (!target) {
+    return { success: false, error: "Member not found" };
+  }
+
+  if (target.role === "OWNER") {
+    return { success: false, error: "Cannot deactivate the group owner" };
+  }
+
+  const balance = await getMemberBalance(memberId);
+
+  if (balance !== 0) {
+    return {
+      success: false,
+      error: "Member must have a zero balance before deactivation",
+    };
+  }
+
+  try {
+    await prisma.groupMember.update({
+      where: { id: memberId },
+      data: { isActive: false, updatedById: currentUserId },
+    });
+
+    revalidatePath(`/groups/${groupId}`);
+    refresh();
+
+    return { success: true, groupId };
+  } catch (error) {
+    handleError(error);
+    return { success: false, error: "Failed to deactivate member" };
+  }
+}
+
+export async function leaveGroup(groupId: string): Promise<ActionResult> {
+  const currentUserId = await getCurrentUserId();
+
+  if (!currentUserId) {
+    return { success: false, error: "You must be signed in" };
+  }
+
+  const membership = await prisma.groupMember.findFirst({
+    where: { groupId, userId: currentUserId, isActive: true },
+  });
+
+  if (!membership) {
+    return { success: false, error: "You are not an active member of this group" };
+  }
+
+  if (membership.role === "OWNER") {
+    return {
+      success: false,
+      error: "Group owner cannot leave. Transfer ownership or deactivate the group first.",
+    };
+  }
+
+  const balance = await getMemberBalance(membership.id);
+
+  if (balance !== 0) {
+    return {
+      success: false,
+      error: "You must have a zero balance before leaving",
+    };
+  }
+
+  try {
+    await prisma.groupMember.update({
+      where: { id: membership.id },
+      data: { isActive: false, updatedById: currentUserId },
+    });
+
+    revalidatePath(`/groups/${groupId}`);
+    revalidatePath("/groups");
+    refresh();
+
+    return { success: true, groupId };
+  } catch (error) {
+    handleError(error);
+    return { success: false, error: "Failed to leave group" };
+  }
+}
+
+export async function updateGroupMembers(
+  groupId: string,
+  formData: MemberFormData,
+) {
+  const validation = memberFormSchema.safeParse(formData);
+
+  if (!validation.success) {
+    return { success: false, errors: validation.error };
+  }
+
+  const { members } = validation.data;
+
+  const currentUserId = await getCurrentUserId();
+
+  if (!currentUserId) {
+    throw new Error("User must be authenticated to manage members");
+  }
+
+  const membership = await requireActiveMembership(groupId, currentUserId);
+
+  if (!membership) {
+    return { success: false, error: "You are not an active member of this group" };
+  }
+
+  try {
+    const group = await prisma.group.findUnique({
+      where: { id: groupId },
+    });
+
+    if (!group) {
+      return { success: false, error: "Group not found" };
+    }
+
+    const newMembers = members.filter((m) => !m.id);
+
+    if (newMembers.length > 0) {
+      await prisma.groupMember.createMany({
+        data: newMembers.map((member) => ({
+          name: member.name,
+          groupId,
+          userId: null,
+          isActive: true,
+          createdById: currentUserId,
+          updatedById: currentUserId,
+        })),
+      });
+    }
+
+    revalidatePath(`/groups/${groupId}`);
+    refresh();
+
+    return { success: true };
+  } catch (error) {
+    handleError(error);
+    return { success: false, error: "Failed to add members" };
+  }
+}
+
+export async function getGroupMembers(groupId: string): Promise<GroupMember[]> {
+  try {
+    const members = await prisma.groupMember.findMany({
+      where: { groupId },
+      orderBy: [{ isActive: "desc" }, { name: "asc" }],
+    });
+
+    return members;
+  } catch (error) {
+    handleError(error);
+    return [];
+  }
+}
+
+export async function getMemberManagementData(groupId: string) {
+  const currentUserId = await getCurrentUserId();
+
+  if (!currentUserId) {
+    return null;
+  }
+
+  const callerMembership = await prisma.groupMember.findFirst({
+    where: { groupId, userId: currentUserId, isActive: true },
+    include: { user: true },
+  });
+
+  if (!callerMembership) {
+    return null;
+  }
+
+  const members = await prisma.groupMember.findMany({
+    where: { groupId },
+    include: { user: true },
+    orderBy: [{ isActive: "desc" }, { name: "asc" }],
+  });
+
+  const balances = new Map<string, number>();
+  const expenseCounts = new Map<string, number>();
+
+  await Promise.all(
+    members.map(async (member) => {
+      balances.set(member.id, await getMemberBalance(member.id));
+      expenseCounts.set(member.id, await getMemberExpenseCount(member.id));
+    }),
+  );
+
+  return {
+    members,
+    balances: Object.fromEntries(balances),
+    expenseCounts: Object.fromEntries(expenseCounts),
+    callerMembership,
+    currentUserId,
+  };
+}

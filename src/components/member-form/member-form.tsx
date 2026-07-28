@@ -1,59 +1,44 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  useForm,
-  useFieldArray,
-  SubmitHandler,
-  FormProvider,
-} from "react-hook-form";
-import * as z from "zod";
-import { XIcon } from "lucide-react";
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-  FieldLegend,
-  FieldSeparator,
-  FieldSet,
-} from "@/components/ui/field";
+import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
+import { Trash2, UserRoundPlus, CirclePlus } from "lucide-react";
+import { UserAvatar } from "@/components/shared/user-avatar";
+import { useState } from "react";
+
+import { FieldGroup } from "@/components/ui/field";
 import { InputField } from "@/components/shared/form/input-field";
+import { FormLayout } from "@/components/shared/form/form-layout";
+import {
+  SectionContainer,
+  SectionContainerItem,
+} from "@/components/shared/section-container";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
-
-const memberFormSchema = z.object({
-  members: z
-    .array(z.object({ name: z.string() }))
-    .min(1, "At least one member must be added"),
-});
-
-type memberForm = z.infer<typeof memberFormSchema>;
+import { memberFormSchema, MemberFormData } from "@/lib/validations/member";
 
 interface MemberFormProps {
-  mode?: "add" | "edit";
-  defaultValues?: Partial<memberForm>;
-  onSubmit?: (data: memberForm) => void;
+  defaultValues?: Partial<MemberFormData>;
+  onSubmit?: (data: MemberFormData) => void;
   onCancel?: () => void;
 }
 
+type MemberItem = MemberFormData["members"][number];
+
 export function MemberForm({
-  mode = "add",
   defaultValues,
   onSubmit: onSubmitProp,
   onCancel,
-}: MemberFormProps) {
-  const methods = useForm<memberForm>({
+}: Readonly<MemberFormProps>) {
+  const methods = useForm<MemberFormData>({
     resolver: zodResolver(memberFormSchema),
     defaultValues: defaultValues || {
-      members: [{ name: "" }],
+      members: [{ name: "mmm" }, { name: "ssss" }],
     },
   });
 
   const {
     control,
-    handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = methods;
 
   const { fields, append, remove } = useFieldArray({
@@ -61,74 +46,97 @@ export function MemberForm({
     name: "members",
   });
 
-  const actionText = mode === "edit" ? "Update" : "Save";
+  const [deletedIds, setDeletedIds] = useState<string[]>([]);
 
-  const onSubmit: SubmitHandler<memberForm> = (data) => {
+  const toggleDelete = (field: MemberItem) => {
+    if (!field?.groupId) {
+      const index = fields.findIndex((f) => f.id === field.id);
+      if (index !== -1) {
+        remove(index);
+      }
+      return;
+    }
+    const id = field.id!;
+
+    setDeletedIds((prev) =>
+      prev.includes(id) ? prev.filter((d) => d !== id) : [...prev, id],
+    );
+  };
+
+  const onSubmit: SubmitHandler<MemberFormData> = (data) => {
+    const filtered = {
+      ...data,
+      members: data.members.filter((m, idx) => {
+        const field = fields[idx];
+        return !deletedIds.includes(field.id);
+      }),
+    };
     if (onSubmitProp) {
-      onSubmitProp(data);
+      onSubmitProp(filtered);
     } else {
-      console.log(data);
+      console.log(filtered);
     }
   };
 
+  console.log("@@@@@@", fields);
+
   return (
-    <div className="w-full max-w-md">
-      <FormProvider {...methods}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <FieldGroup>
-            <FieldSet>
-              <FieldLegend>
-                {mode === "edit" ? "Edit Group Member" : "Add Group Member"}
-              </FieldLegend>
+    <SectionContainer>
+      <FormLayout methods={methods} onSubmit={onSubmit}>
+        <FormLayout.Header
+          title="Members"
+          description="Manage members in this group."
+        />
+        <FormLayout.Section>
+          <FieldGroup className="gap-0 divide-y">
+            {fields.map((field, index) => {
+              const isDeleted = deletedIds.includes(field.id);
 
-              <FieldGroup>
-                {fields.map((field, index) => (
-                  <div key={field.id} className="flex items-center gap-2">
-                    <InputField
-                      name={`members.${index}.name`}
-                      label="Member Name"
-                      placeholder="xxx"
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      onClick={() => remove(index)}
-                      disabled={isSubmitting}
-                      aria-label={`Remove member ${index + 1}`}
-                    >
-                      <XIcon />
-                    </Button>
-                  </div>
-                ))}
-              </FieldGroup>
-            </FieldSet>
+              return (
+                <SectionContainerItem
+                  key={field.id}
+                  className="flex items-center gap-2 px-0"
+                >
+                  <UserAvatar name={field.name} size="w-10 h-10" />
+
+                  <InputField
+                    name={`members[${index}].name`}
+                    disabled={
+                      (!!`${field.name}` && !!field?.groupId) || isDeleted
+                    }
+                    placeholder={`${field.name}` || "xxx"}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => toggleDelete(field)}
+                    disabled={isSubmitting}
+                  >
+                    {isDeleted ? <UserRoundPlus /> : <Trash2 />}
+                  </Button>
+                </SectionContainerItem>
+              );
+            })}
           </FieldGroup>
+        </FormLayout.Section>
 
-          <Button
-            type="button"
-            variant="outline"
-            disabled={isSubmitting}
-            onClick={() => append({ name: "" })}
-          >
-            Add Member
-          </Button>
-          <FieldSeparator />
+        <Button
+          type="button"
+          className="my-8 w-full"
+          variant="outline"
+          disabled={isSubmitting}
+          onClick={() => append({ name: "" })}
+        >
+          <CirclePlus />
+          Add Member
+        </Button>
 
-          <div className="flex justify-center gap-4">
-            <Button type="button" variant="outline" onClick={onCancel}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting && <Spinner />}
-              {actionText}
-            </Button>
-          </div>
-        </form>
-      </FormProvider>
-    </div>
+        <FormLayout.Actions
+          onCancel={onCancel}
+          submitText="Save"
+          isSubmitting={isSubmitting}
+        />
+      </FormLayout>
+    </SectionContainer>
   );
-}
-
-export function AddMemberForm() {
-  return <MemberForm mode="add" />;
 }

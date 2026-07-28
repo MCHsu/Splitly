@@ -15,3 +15,17 @@ export const memberFormSchema = z.object({
 });
 
 export type MemberFormData = z.infer<typeof memberFormSchema>;
+
+export const joinGroupSchema = z.object({
+  inviteCode: z.string().min(1),
+  displayName: z.string().min(1, "Display name is required"),
+});
+
+export type JoinGroupData = z.infer<typeof joinGroupSchema>;
+
+export const addVirtualMemberSchema = z.object({
+  groupId: z.string().min(1),
+  name: z.string().min(1, "Name is required"),
+});
+
+export type AddVirtualMemberData = z.infer<typeof addVirtualMemberSchema>;
