@@ -1,5 +1,8 @@
+import { Plus, Users } from "lucide-react";
+
 import {
   Sidebar,
+  SidebarHeader,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
@@ -7,12 +10,19 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarFooter,
 } from "@/components/ui/sidebar";
-import { Users } from "lucide-react";
+import { AvatarDropdown } from "@/components/shared/avatar-dropdown";
+import { Logo } from "@/components/shared/logo";
 
 const items = [
   {
-    title: "My Group",
+    title: "New Group",
+    url: "/groups/new",
+    icon: Plus,
+  },
+  {
+    title: "My Groups",
     url: "/groups",
     icon: Users,
   },
@@ -21,9 +31,12 @@ const items = [
 export function AppSidebar() {
   return (
     <Sidebar>
+      <SidebarHeader className="pt-6 pb4 px-4">
+        <Logo />
+      </SidebarHeader>
+      {/* Sidebar content */}
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Bill Splitter</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
@@ -40,6 +53,15 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
+      {/* Sidebar footer */}
+      <SidebarFooter>
+        {/* <SidebarMenu>
+          <SidebarMenuItem> */}
+        <AvatarDropdown />
+        {/* </SidebarMenuItem>
+        </SidebarMenu> */}
+      </SidebarFooter>
     </Sidebar>
   );
 }
