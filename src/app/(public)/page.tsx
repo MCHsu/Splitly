@@ -50,7 +50,7 @@ export default function Landing() {
         <div className="container mx-auto px-4 py-16">
           <div className="max-w-5xl mx-auto">
             <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-              Why Choose Bill Splitter?
+              Why Choose Splitly?
             </h2>
 
             <div className="grid md:grid-cols-3 gap-8">
