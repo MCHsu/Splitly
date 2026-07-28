@@ -3,187 +3,196 @@
 import { format } from "date-fns";
 import Link from "next/link";
 import {
-  Utensils,
-  Car,
-  ShoppingCart,
-  Plane,
-  UserPlus,
-  Circle,
-} from "lucide-react";
+  SectionContainer,
+  SectionContainerItem,
+} from "@/components/shared/section-container";
+import {
+  EXPENSE_CATEGORIES,
+  getExpenseCategory,
+} from "@/lib/constants/expense-categories";
+import { formatMoneyFromCents } from "@/lib/money";
+import type { GroupMemberWithUser } from "@/lib/member";
+import { cn } from "@/lib/utils";
 
-interface ExpenseActivity {
+interface ExpenseItem {
   id: string;
-  type: "expense" | "member-added";
   date: Date;
   description: string;
-  paidBy?: string;
-  amount?: number;
-  status?: "lent" | "owed" | "not-involved";
-  statusAmount?: number;
-  icon?: string;
-  addedMember?: string;
-  addedBy?: string;
+  amountInCents: number;
+  category?: string | null;
+  payments?: {
+    amountInCents: number;
+    member: {
+      id?: string;
+      name: string;
+      isActive?: boolean;
+      userId?: string | null;
+    };
+  }[];
+  shares?: {
+    amountInCents: number;
+    member: {
+      id?: string;
+      name: string;
+      isActive?: boolean;
+      userId?: string | null;
+    };
+  }[];
 }
 
 interface ExpenseListProps {
-  activities: ExpenseActivity[];
+  expenses: ExpenseItem[];
   groupId?: string;
+  members?: GroupMemberWithUser[];
+  currentUserId?: string | null;
+  currency?: string;
 }
 
-const iconMap: Record<string, any> = {
-  dining: Utensils,
-  transport: Car,
-  shopping: ShoppingCart,
-  flight: Plane,
-};
-
-export function ExpenseList({ activities, groupId }: ExpenseListProps) {
-  const getIcon = (iconType?: string) => {
-    if (!iconType) return Circle;
-    const Icon = iconMap[iconType] || Circle;
-    return Icon;
-  };
-
-  const getStatusColor = (status?: string) => {
-    switch (status) {
-      case "lent":
-        return "text-green-500";
-      case "owed":
-        return "text-red-500";
-      case "not-involved":
-        return "text-gray-500";
-      default:
-        return "text-gray-900";
-    }
-  };
-
-  const getStatusText = (status?: string, amount?: number) => {
-    if (!status || amount === undefined) return null;
-
-    switch (status) {
-      case "lent":
-        return `You lent $${amount.toFixed(2)}`;
-      case "owed":
-        return `You owe $${amount.toFixed(2)}`;
-      case "not-involved":
-        return "not involved";
-      default:
-        return null;
-    }
-  };
-
-  const groupedActivities = activities.reduce((acc, activity) => {
-    const monthYear = format(activity.date, "MMMM yyyy").toUpperCase();
-    if (!acc[monthYear]) {
-      acc[monthYear] = [];
-    }
-    acc[monthYear].push(activity);
-    return acc;
-  }, {} as Record<string, ExpenseActivity[]>);
+function formatMemberName(
+  name: string,
+  memberId?: string,
+  members?: GroupMemberWithUser[],
+  paymentMember?: { isActive?: boolean },
+) {
+  const isInactive =
+    paymentMember?.isActive === false ||
+    (memberId && members?.find((m) => m.id === memberId)?.isActive === false);
 
   return (
-    <div className="w-full max-w-2xl bg-white rounded-lg shadow">
-      <div className="flex items-center justify-between p-4 border-b">
-        <h2 className="text-xl font-semibold">Activity</h2>
-        <button className="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1">
-          <span>Filter</span>
-        </button>
-      </div>
+    <span className={isInactive ? "text-muted-foreground" : undefined}>
+      {name}
+      {isInactive && (
+        <span className="ml-1 text-xs text-muted-foreground">(Inactive)</span>
+      )}
+    </span>
+  );
+}
 
-      <div className="divide-y">
-        {Object.entries(groupedActivities).map(([monthYear, items]) => (
-          <div key={monthYear}>
-            <div className="px-4 py-2 bg-gray-50">
-              <h3 className="text-xs font-semibold text-gray-500">
-                {monthYear}
+export function ExpenseList({
+  expenses,
+  groupId,
+  members,
+  currentUserId,
+  currency = "TWD",
+}: ExpenseListProps) {
+  const groupedExpenses = expenses.reduce(
+    (acc, expense) => {
+      const dayKey = format(expense.date, "d MMMM yyyy");
+      if (!acc[dayKey]) {
+        acc[dayKey] = [];
+      }
+      acc[dayKey].push(expense);
+      return acc;
+    },
+    {} as Record<string, ExpenseItem[]>,
+  );
+
+  return (
+    <div className="w-full">
+      <p className="mb-3 text-sm text-muted-foreground">
+        {expenses.length} {expenses.length === 1 ? "expense" : "expenses"}
+      </p>
+
+      <SectionContainer className="divide-y">
+        {Object.entries(groupedExpenses).map(([dayLabel, items]) => (
+          <div key={dayLabel}>
+            <div className="bg-muted/40 px-4 py-2">
+              <h3 className="text-xs font-medium text-muted-foreground">
+                {dayLabel}
               </h3>
             </div>
 
-            {items.map((activity) => {
-              const Icon = getIcon(activity.icon);
+            <div className="divide-y">
+              {items.map((expense) => {
+                const payments = expense.payments ?? [];
+                const paidByText =
+                  payments.length === 1
+                    ? formatMemberName(
+                        payments[0].member.name,
+                        payments[0].member.id,
+                        members,
+                        payments[0].member,
+                      )
+                    : `${payments.length} people`;
 
-              if (activity.type === "member-added") {
+                const paidTotal =
+                  payments.length === 1
+                    ? payments[0].amountInCents
+                    : expense.amountInCents;
+
+                const myShare = currentUserId
+                  ? expense.shares?.find(
+                      (share) =>
+                        share.member.userId === currentUserId ||
+                        members?.find((m) => m.id === share.member.id)
+                          ?.userId === currentUserId,
+                    )?.amountInCents
+                  : undefined;
+
+                const category =
+                  getExpenseCategory(expense.category ?? "") ??
+                  EXPENSE_CATEGORIES.find((c) => c.value === "other")!;
+                const CategoryIcon = category.icon;
+
                 return (
-                  <div key={activity.id} className="px-4 py-4 hover:bg-gray-50">
-                    <div className="flex items-start gap-3">
-                      <div className="text-sm text-gray-500 w-12 text-center">
-                        <div>{format(activity.date, "MMM").slice(0, 3)}</div>
-                        <div className="font-semibold">
-                          {format(activity.date, "d")}
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-3 flex-1">
-                        <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-                          <UserPlus className="w-5 h-5 text-gray-600" />
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          <span className="font-semibold">
-                            {activity.addedMember}
-                          </span>
-                          {" was added to the group by "}
-                          <span className="font-semibold">
-                            {activity.addedBy}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              }
-
-              return (
-                <Link
-                  key={activity.id}
-                  href={
-                    groupId
-                      ? `/groups/${groupId}/expenses/${activity.id}/edit`
-                      : "#"
-                  }
-                  className="block px-4 py-4 hover:bg-gray-50 cursor-pointer"
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="text-sm text-gray-500 w-12 text-center">
-                      <div>{format(activity.date, "MMM").slice(0, 3)}</div>
-                      <div className="font-semibold">
-                        {format(activity.date, "d")}
-                      </div>
-                    </div>
-
-                    <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
-                      <Icon className="w-5 h-5 text-orange-600" />
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-gray-900">
-                        {activity.description}
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        {activity.paidBy} paid ${activity.amount?.toFixed(2)}{" "}
-                        total
-                      </p>
-                    </div>
-
-                    <div
-                      className={`text-sm font-semibold text-right ${getStatusColor(
-                        activity.status
-                      )}`}
+                  <SectionContainerItem
+                    key={expense.id}
+                    className="transition-colors hover:bg-muted/40"
+                  >
+                    <Link
+                      href={
+                        groupId
+                          ? `/groups/${groupId}/expenses/${expense.id}`
+                          : "#"
+                      }
+                      className="flex items-center gap-3"
                     >
-                      {getStatusText(activity.status, activity.statusAmount)}
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
+                      <div
+                        className={cn(
+                          "flex size-10 shrink-0 items-center justify-center rounded-md",
+                          category.color.bg,
+                        )}
+                      >
+                        <CategoryIcon
+                          className={cn("size-4", category.color.icon)}
+                        />
+                      </div>
+
+                      <div className="min-w-0 flex-1">
+                        <h3 className="truncate font-semibold text-foreground">
+                          {expense.description}
+                        </h3>
+                        <p className="truncate text-sm text-muted-foreground">
+                          {paidByText} Paid{" "}
+                          {formatMoneyFromCents(paidTotal, {
+                            currencyCode: currency,
+                          })}
+                          {myShare != null && (
+                            <>
+                              {" · "}Your share{" "}
+                              {formatMoneyFromCents(myShare, {
+                                currencyCode: currency,
+                              })}
+                            </>
+                          )}
+                        </p>
+                      </div>
+
+                      {myShare != null && (
+                        <div className="shrink-0 text-base font-bold">
+                          {formatMoneyFromCents(myShare, {
+                            currencyCode: currency,
+                          })}
+                        </div>
+                      )}
+                    </Link>
+                  </SectionContainerItem>
+                );
+              })}
+            </div>
           </div>
         ))}
-      </div>
-
-      <div className="p-4 text-center border-t">
-        <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-          Load more activity
-        </button>
-      </div>
+      </SectionContainer>
     </div>
   );
 }

@@ -1,61 +1,49 @@
-"use client";
+import { notFound, redirect } from "next/navigation";
 
-import { useParams, useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { getExpenseById, updateExpense } from "@/app/actions/expense.action";
+import { getGroupById } from "@/app/actions/group.action";
 import { ExpenseForm } from "@/components/expense-form/expense-form";
+import { PageHeader } from "@/components/shared/page-header";
+import { toExpenseFormValues } from "@/lib/expense-form-values";
+import type { ExpenseFormData } from "@/lib/validations/expense";
 
-export default function EditExpensePage() {
-  const params = useParams();
-  const router = useRouter();
-  const groupId = params.groupId as string;
-  const expenseId = params.expenseId as string;
+export default async function EditExpensePage({
+  params,
+}: {
+  params: Promise<{ groupId: string; expenseId: string }>;
+}) {
+  const { groupId, expenseId } = await params;
+  const [expense, group] = await Promise.all([
+    getExpenseById(expenseId),
+    getGroupById(groupId),
+  ]);
 
-  const mockExpenseData = {
-    description: "Dinner at Mario's",
-    amount: 250.0,
-    date: new Date(2024, 0, 13),
-    paidByMode: "single" as const,
-    paidBy: [{ memberId: "user-1", amount: 250.0 }],
-    allocations: [
-      { memberId: "user-1", amount: 125.0 },
-      { memberId: "user-2", amount: 125.0 },
-    ],
-  };
+  if (!expense || expense.groupId !== groupId || !group) {
+    notFound();
+  }
 
-  const handleSubmit = (data: any) => {
-    console.log("Update expense:", data);
-    router.push(`/groups/${groupId}`);
-  };
+  const defaultValues = toExpenseFormValues(expense, group.members);
 
-  const handleCancel = () => {
-    router.push(`/groups/${groupId}`);
-  };
+  async function handleSubmit(data: ExpenseFormData) {
+    "use server";
+    const result = await updateExpense(expenseId, data);
+    if (!result.success) {
+      throw new Error(
+        "error" in result ? result.error : "Failed to update expense",
+      );
+    }
+    redirect(`/groups/${groupId}/expenses/${expenseId}`);
+  }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-        <Button
-          variant="ghost"
-          className="mb-4"
-          onClick={() => router.push(`/groups/${groupId}`)}
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Group
-        </Button>
-
-        <h1 className="text-3xl font-bold mb-2">Edit Expense</h1>
-        <p className="text-gray-600 mb-8">
-          Update the details of this expense.
-        </p>
-
-        <ExpenseForm
-          mode="edit"
-          defaultValues={mockExpenseData}
-          onSubmit={handleSubmit}
-          onCancel={handleCancel}
-        />
-      </div>
-    </div>
+    <>
+      <PageHeader title="Edit Expense" />
+      <ExpenseForm
+        mode="edit"
+        defaultValues={defaultValues}
+        onSubmit={handleSubmit}
+        cancelHref={`/groups/${groupId}/expenses/${expenseId}`}
+      />
+    </>
   );
 }

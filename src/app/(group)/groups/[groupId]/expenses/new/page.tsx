@@ -1,9 +1,19 @@
 import { ExpenseForm } from "@/components/expense-form/expense-form";
+import { PageHeader } from "@/components/shared/page-header";
+// import { getGroupMembers } from "@/app/actions/member.action";
 
-export default function AddExpensePage() {
+export default async function AddExpensePage({
+  params,
+}: {
+  params: Promise<{ groupId: string }>;
+}) {
+  const { groupId } = await params;
+  // const members = await getGroupMembers(groupId);
+
   return (
-    <div className="w-full flex h-full items-center justify-center gap-4 py-8">
-      <ExpenseForm />
-    </div>
+    <>
+      <PageHeader title="Create New Expense" />
+      <ExpenseForm groupId={groupId} />
+    </>
   );
 }

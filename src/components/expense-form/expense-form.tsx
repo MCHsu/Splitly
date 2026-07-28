@@ -1,167 +1,159 @@
 "use client";
 
-import { useState } from "react";
-import { useForm, SubmitHandler, FormProvider } from "react-hook-form";
+import { useMemo, useState } from "react";
+import { useForm, SubmitHandler, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import {
-  FieldDescription,
-  FieldGroup,
-  FieldLegend,
-  FieldSeparator,
-  FieldSet,
-} from "@/components/ui/field";
-import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
+
+import { FieldGroup } from "@/components/ui/field";
+import { FormLayout } from "@/components/shared/form/form-layout";
 import { InputField } from "@/components/shared/form/input-field";
+import { AmountField } from "@/components/shared/form/amount-field";
 import { DateField } from "@/components/shared/form/date-field";
 import { TextareaField } from "@/components/shared/form/textarea-field";
+import { SectionContainer } from "@/components/shared/section-container";
+import { CategoryField } from "@/components/shared/form/category-field";
 import { PaidBySection } from "@/components/expense-form/paid-by-section";
-import { SplitSection } from "@/components/expense-form/split-section";
-
-const SplitMethodSchema = z.enum(["EQUAL", "PERCENTAGE", "SHARES", "EXACT"]);
-
-const PaymentSchema = z.object({
-  memberId: z.string().min(1, "Member ID is required"),
-  amount: z.coerce.number().min(0, "Payment amount cannot be negative"),
-});
-
-const AllocationSchema = z.object({
-  memberId: z.string().min(1, "Member ID is required"),
-  amount: z.coerce.number().min(0, "Value cannot be negative"),
-});
-
-const expenseFormSchema = z.object({
-  description: z.string().min(1, "Description is required"),
-  amount: z.coerce
-    .number()
-    .min(0.01, "Amount must be greater than 0")
-    .max(10000000, "Amount exceeds the maximum limit"),
-  date: z.date(),
-  paidByMode: z.enum(["single", "multiple"]).default("single"),
-  paidBy: z.array(PaymentSchema).min(1, "At least one payer is required"),
-  allocations: z
-    .array(AllocationSchema)
-    .min(1, "At least one member must be selected"),
-  note: z.string().optional(),
-});
-
-type expenseForm = z.infer<typeof expenseFormSchema>;
+import { SplitMethodSection } from "@/components/expense-form/split-method-section";
+import { expenseFormSchema, ExpenseFormData } from "@/lib/validations/expense";
+import { createExpense } from "@/app/actions/expense.action";
+import { useGroup } from "@/providers/group-provider";
+import { useMembers } from "@/providers/member-provider";
+import { useUser } from "@/providers/user-provider";
 
 interface ExpenseFormProps {
+  groupId?: string;
   mode?: "add" | "edit";
-  defaultValues?: Partial<expenseForm>;
-  onSubmit?: (data: expenseForm) => void;
+  defaultValues?: ExpenseFormData;
+  onSubmit?: (data: ExpenseFormData) => void | Promise<void>;
   onCancel?: () => void;
+  cancelHref?: string;
 }
 
 export function ExpenseForm({
+  groupId,
   mode = "add",
   defaultValues,
   onSubmit: onSubmitProp,
   onCancel,
+  cancelHref,
 }: ExpenseFormProps) {
-  const methods = useForm<expenseForm>({
-    resolver: zodResolver(expenseFormSchema),
-    defaultValues: defaultValues || {
+  const { activeMembers } = useMembers();
+  const { currency } = useGroup();
+  const { user } = useUser();
+
+  const currentUser =
+    activeMembers.find((member) => member.userId === user?.id) ??
+    activeMembers[0];
+
+  // Every member gets a row in both lists; `isSelected` decides who is actually involved.
+  const initialValues = useMemo<ExpenseFormData>(() => {
+    const rows = activeMembers.map((member) => ({
+      memberId: member.id,
+      amount: 0,
+      isSelected: true,
+      isManual: false,
+    }));
+
+    return {
       description: "",
       amount: 0,
       date: new Date(),
-      paidByMode: "single",
-      paidBy: [{ memberId: "", amount: 0 }],
-    },
+      category: "food-drink",
+      splitMethod: "EXACT",
+      paidBy: rows.map((row) => ({
+        ...row,
+        isSelected: row.memberId === currentUser?.id,
+      })),
+      allocations: rows,
+    };
+  }, [activeMembers, currentUser?.id]);
+
+  const methods = useForm<ExpenseFormData>({
+    resolver: zodResolver(expenseFormSchema) as Resolver<ExpenseFormData>,
+    defaultValues: defaultValues ?? initialValues,
   });
 
   const {
-    control,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    setValue,
+    formState: { isSubmitting },
     getValues,
   } = methods;
 
   const actionText = mode === "edit" ? "Update" : "Submit";
 
-  const onSubmit: SubmitHandler<expenseForm> = (data) => {
+  const onSubmit: SubmitHandler<ExpenseFormData> = async (data) => {
     if (onSubmitProp) {
-      onSubmitProp(data);
+      await onSubmitProp(data);
+      return;
     }
-    console.log(data);
+    if (groupId) {
+      const result = await createExpense(groupId, data);
+      if (result.success) {
+        onCancel?.();
+      } else {
+        console.error("Failed to create expense", result.error);
+      }
+    }
   };
 
   const [syncedAmount, setSyncedAmount] = useState(defaultValues?.amount || 0);
 
   const handleSyncAmount = () => {
-    const currentPaidByMode = getValues("paidByMode");
     const currentAmount = +getValues("amount") || 0;
-
     setSyncedAmount(currentAmount);
-
-    if (currentPaidByMode === "single") {
-      const currentPayerId = getValues("paidBy")?.[0]?.memberId || "me";
-
-      setValue(
-        "paidBy",
-        [{ memberId: currentPayerId, amount: currentAmount }],
-        { shouldValidate: true }
-      );
-    }
   };
 
   return (
-    <div className="w-full max-w-md h-full">
-      <FormProvider {...methods}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col gap-4 justify-between">
-            <FieldGroup>
-              <FieldSet>
-                <FieldLegend>
-                  {mode === "edit" ? "Edit Expense" : "Payment Method"}
-                </FieldLegend>
-                <FieldDescription>
-                  All transactions are secure and encrypted
-                </FieldDescription>
-
-                <InputField
-                  name="description"
-                  label="Expense Description"
-                  placeholder="e.g., Dinner at Joe's"
-                />
-                <InputField
-                  name="amount"
-                  label="Amount"
-                  placeholder="$"
-                  handleOnBlur={handleSyncAmount}
-                />
-                <DateField name="date" />
-                <TextareaField
-                  name="note"
-                  label="Note"
-                  placeholder="Type your notes here."
-                />
-              </FieldSet>
-            </FieldGroup>
-
-            <FieldSeparator />
-
-            <FieldGroup>
-              <PaidBySection name="paidBy" currentAmount={syncedAmount} />
-              <SplitSection name="allocations" currentAmount={syncedAmount} />
-            </FieldGroup>
-
-            <div className="w-full flex gap-4 justify-center">
-              <Button type="button" variant="outline" onClick={onCancel}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting && <Spinner />}
-                {actionText}
-              </Button>
-            </div>
+    <SectionContainer>
+      <FormLayout methods={methods} onSubmit={onSubmit}>
+        <FormLayout.Section>
+          <div className="flex flex-col md:flex-row gap-4 md:gap-6 lg:gap-10">
+            <InputField
+              name="description"
+              label="Description"
+              placeholder="e.g., Dinner at Joe's"
+            />
+            <CategoryField name="category" label="Category" />
           </div>
-        </form>
-      </FormProvider>
-    </div>
+          <div className="flex flex-col md:flex-row gap-4 md:gap-6 lg:gap-10">
+            <AmountField
+              name="amount"
+              label="Amount"
+              placeholder="-"
+              currencyCode={currency}
+              handleOnBlur={handleSyncAmount}
+            />
+            <DateField name="date" />
+          </div>
+
+          <FieldGroup>
+            <PaidBySection
+              name="paidBy"
+              total={syncedAmount}
+              currency={currency}
+            />
+            <SplitMethodSection
+              name="allocations"
+              total={syncedAmount}
+              currency={currency}
+            />
+          </FieldGroup>
+
+          <TextareaField
+            name="note"
+            label="Note"
+            placeholder="Add any extra details..."
+          />
+        </FormLayout.Section>
+
+        <FormLayout.Actions
+          className="w-full"
+          onCancel={onCancel}
+          cancelHref={cancelHref}
+          submitText={actionText}
+          isSubmitting={isSubmitting}
+        />
+      </FormLayout>
+    </SectionContainer>
   );
 }
 
