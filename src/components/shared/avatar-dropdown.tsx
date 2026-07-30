@@ -1,15 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { SettingsIcon, LogOutIcon, ChevronsUpDown } from "lucide-react";
+import { LogOutIcon, ChevronsUpDown } from "lucide-react";
 
 import { UserAvatar } from "@/components/shared/user-avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -20,7 +18,6 @@ import {
 } from "@/components/ui/sidebar";
 import { signOut } from "@/lib/auth-client";
 import { useUser } from "@/providers/user-provider";
-import { router } from "better-auth/api";
 
 export function AvatarDropdown() {
   const { isMobile } = useSidebar();

@@ -1,8 +1,6 @@
-import { Prisma } from "@/generated/prisma/client";
+import type { GroupMemberWithUser } from "@/types/member";
 
-export type GroupMemberWithUser = Prisma.GroupMemberGetPayload<{
-  include: { user: true };
-}>;
+export type { GroupMemberWithUser };
 
 export const getMemberDisplayName = (member: GroupMemberWithUser) =>
   member.user?.name ?? member.name;

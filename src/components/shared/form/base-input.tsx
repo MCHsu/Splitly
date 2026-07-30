@@ -17,12 +17,12 @@ interface BaseInputProps extends Omit<
   suffix?: React.ReactNode;
 }
 
-export const BaseInput = ({
+export function BaseInput({
   prefix,
   suffix,
   className,
   ...props
-}: BaseInputProps) => {
+}: BaseInputProps) {
   return (
     <InputGroup className="h-10 bg-white">
       <InputGroupInput className={cn(className)} {...props} />
@@ -34,4 +34,4 @@ export const BaseInput = ({
       {suffix && <InputGroupAddon align="inline-end">{suffix}</InputGroupAddon>}
     </InputGroup>
   );
-};
+}

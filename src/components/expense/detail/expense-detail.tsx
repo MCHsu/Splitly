@@ -4,38 +4,15 @@ import { SectionContainer } from "@/components/shared/section-container";
 import {
   LedgerColumn,
   type LedgerEntry,
-} from "@/components/expense-detail/ledger-column";
+} from "@/components/expense/detail/ledger-column";
 import {
   EXPENSE_CATEGORIES,
   getExpenseCategory,
 } from "@/lib/constants/expense-categories";
 import { formatMoneyFromCents } from "@/lib/money";
 import { cn } from "@/lib/utils";
-
-type DetailMember = {
-  id: string;
-  name: string;
-  isActive: boolean;
-  userId: string | null;
-};
-
-type ExpenseDetailData = {
-  description: string;
-  amountInCents: number;
-  date: Date;
-  category: string | null;
-  note: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-  payments: {
-    amountInCents: number;
-    member: DetailMember;
-  }[];
-  shares: {
-    amountInCents: number;
-    member: DetailMember;
-  }[];
-};
+import type { ExpenseDetailData } from "@/types/expense";
+import type { ExpensePartyMember } from "@/types/member";
 
 interface ExpenseDetailProps {
   expense: ExpenseDetailData;
@@ -44,7 +21,7 @@ interface ExpenseDetailProps {
 }
 
 function toLedgerEntries(
-  rows: { amountInCents: number; member: DetailMember }[],
+  rows: { amountInCents: number; member: ExpensePartyMember }[],
 ): LedgerEntry[] {
   return rows.map((row) => ({
     memberId: row.member.id,

@@ -7,7 +7,7 @@ interface TabbedFieldGroupProps {
   label: string;
   value: string;
   onValueChange: (value: string) => void;
-  options: readonly { value: string; label: string }[];
+  options: ReadonlyArray<{ value: string; label: string }>;
   children: (activeValue: string) => ReactNode;
 }
 
@@ -17,7 +17,7 @@ export function TabbedFieldGroup({
   onValueChange,
   options,
   children,
-}: Readonly<TabbedFieldGroupProps>) {
+}: TabbedFieldGroupProps) {
   return (
     <div className="flex flex-col gap-3">
       <Label className="text-sm font-medium">{label}</Label>

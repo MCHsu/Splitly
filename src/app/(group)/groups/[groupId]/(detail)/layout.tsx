@@ -1,4 +1,6 @@
-import { getGroupById, getGroupStats } from "@/app/actions/group.action";
+import { notFound } from "next/navigation";
+
+import { getGroupById } from "@/lib/queries/group.query";
 import { GroupDetailChrome } from "@/components/group/group-detail-chrome";
 
 export default async function GroupDetailLayout({
@@ -9,13 +11,10 @@ export default async function GroupDetailLayout({
   params: Promise<{ groupId: string }>;
 }) {
   const { groupId } = await params;
-  const [group, stats] = await Promise.all([
-    getGroupById(groupId),
-    getGroupStats(groupId),
-  ]);
+  const group = await getGroupById(groupId);
 
   if (!group) {
-    return null;
+    notFound();
   }
 
   return (

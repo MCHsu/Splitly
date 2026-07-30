@@ -1,4 +1,4 @@
-import { GroupForm } from "@/components/group-form/group-form";
+import { GroupForm } from "@/components/group/group-form";
 import { PageHeader } from "@/components/shared/page-header";
 
 export default function NewGroupPage() {

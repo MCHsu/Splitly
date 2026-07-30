@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { getGroupById } from "@/app/actions/group.action";
+import { getGroupById } from "@/lib/queries/group.query";
 import { GroupProvider } from "@/providers/group-provider";
 import { MembersProvider } from "@/providers/member-provider";
 

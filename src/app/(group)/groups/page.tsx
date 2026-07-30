@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/shared/page-header";
 import { SectionContainer } from "@/components/shared/section-container";
 import { GroupCard } from "@/components/group/group-card";
-import { getAllGroups } from "@/app/actions/group.action";
-import { getAuthSession } from "@/app/actions/auth.action";
+import { getAllGroups } from "@/lib/queries/group.query";
+import { getAuthSession } from "@/lib/queries/auth.query";
 
 export default async function GroupsPage() {
   const groups = await getAllGroups();

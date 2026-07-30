@@ -12,8 +12,8 @@ import { DateField } from "@/components/shared/form/date-field";
 import { TextareaField } from "@/components/shared/form/textarea-field";
 import { SectionContainer } from "@/components/shared/section-container";
 import { CategoryField } from "@/components/shared/form/category-field";
-import { PaidBySection } from "@/components/expense-form/paid-by-section";
-import { SplitMethodSection } from "@/components/expense-form/split-method-section";
+import { PaidBySection } from "@/components/expense/form/paid-by-section";
+import { SplitMethodSection } from "@/components/expense/form/split-method-section";
 import { expenseFormSchema, ExpenseFormData } from "@/lib/validations/expense";
 import { createExpense } from "@/app/actions/expense.action";
 import { useGroup } from "@/providers/group-provider";
@@ -157,6 +157,3 @@ export function ExpenseForm({
   );
 }
 
-export function AddExpenseForm() {
-  return <ExpenseForm mode="add" />;
-}

@@ -7,9 +7,9 @@ import { Spinner } from "@/components/ui/spinner";
 import { EmailStepData } from "@/lib/validations/auth";
 
 interface EmailStepProps {
-  readonly methods: UseFormReturn<EmailStepData>;
-  readonly isChecking: boolean;
-  readonly onSubmit: SubmitHandler<EmailStepData>;
+  methods: UseFormReturn<EmailStepData>;
+  isChecking: boolean;
+  onSubmit: SubmitHandler<EmailStepData>;
 }
 
 export function EmailStep({ methods, isChecking, onSubmit }: EmailStepProps) {

@@ -11,7 +11,7 @@ import { DEFAULT_CURRENCY, DEFAULT_LOCALE } from "@/lib/money";
 
 interface AmountFieldProps<T extends FieldValues> extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
-  "name" | "label"
+  "name" | "label" | "defaultValue" | "type" | "value"
 > {
   name: Path<T>;
   label?: string;
@@ -21,7 +21,7 @@ interface AmountFieldProps<T extends FieldValues> extends Omit<
   handleOnFocus?: () => void;
 }
 
-export const AmountField = <T extends FieldValues>({
+export function AmountField<T extends FieldValues>({
   name,
   label,
   currencyCode = DEFAULT_CURRENCY,
@@ -29,7 +29,7 @@ export const AmountField = <T extends FieldValues>({
   handleOnBlur = () => {},
   handleOnFocus = () => {},
   ...props
-}: AmountFieldProps<T>) => {
+}: AmountFieldProps<T>) {
   const { symbol, decimals, thousandSep, decimalSep } = useMemo(() => {
     const formatter = new Intl.NumberFormat(locale, {
       style: "currency",
@@ -99,4 +99,4 @@ export const AmountField = <T extends FieldValues>({
       )}
     </ControlledField>
   );
-};
+}

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { getGroupById } from "@/app/actions/group.action";
+import { getGroupById } from "@/lib/queries/group.query";
 import {
   BalanceChartCard,
   type BalanceChartDatum,
@@ -10,7 +10,7 @@ import {
   type SuggestedTransfer,
 } from "@/components/group/suggested-transfers-card";
 import { SectionContainer } from "@/components/shared/section-container";
-import { getMemberBalancesForGroup } from "@/lib/balance";
+import { getGroupLedger } from "@/lib/ledger";
 import { getMemberDisplayName } from "@/lib/member";
 import { computeMinTransfers } from "@/lib/settlement";
 
@@ -20,14 +20,21 @@ export default async function GroupBalancePage({
   params: Promise<{ groupId: string }>;
 }) {
   const { groupId } = await params;
-  const [group, balances] = await Promise.all([
+  const [group, ledger] = await Promise.all([
     getGroupById(groupId),
-    getMemberBalancesForGroup(groupId),
+    getGroupLedger(groupId),
   ]);
 
   if (!group) {
     notFound();
   }
+
+  const balances = new Map(
+    [...ledger.entries()].map(([memberId, row]) => [
+      memberId,
+      row.balanceInCents,
+    ]),
+  );
 
   const nameById = new Map(
     group.members.map((member) => [member.id, getMemberDisplayName(member)]),

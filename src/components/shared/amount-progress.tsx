@@ -38,12 +38,12 @@ const tones = {
 } as const;
 
 interface AmountProgressProps extends MoneyFormatOptions {
-  readonly label: string;
+  label: string;
   /** The expense amount every selected row has to add up to. */
-  readonly target: number;
+  target: number;
   /** Sum of the selected rows. */
-  readonly current: number;
-  readonly className?: string;
+  current: number;
+  className?: string;
 }
 
 export function AmountProgress({

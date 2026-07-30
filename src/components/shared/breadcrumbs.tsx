@@ -15,7 +15,11 @@ export type Crumb = {
   href?: string;
 };
 
-export function Breadcrumbs({ items }: { items: Crumb[] }) {
+interface BreadcrumbsProps {
+  items: Crumb[];
+}
+
+export function Breadcrumbs({ items }: BreadcrumbsProps) {
   return (
     <Breadcrumb>
       <BreadcrumbList>

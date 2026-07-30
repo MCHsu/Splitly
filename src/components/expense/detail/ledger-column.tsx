@@ -22,8 +22,6 @@ export function LedgerColumn({
   currency,
   className,
 }: LedgerColumnProps) {
-  const total = entries.reduce((sum, entry) => sum + entry.amountInCents, 0);
-
   return (
     <div className={cn("flex min-w-0 flex-col gap-3", className)}>
       <h3 className="text-xs font-medium tracking-wide text-muted-foreground uppercase">

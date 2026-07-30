@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
 interface BackButtonProps {
-  readonly onClick: () => void;
+  onClick: () => void;
 }
 
 export function BackButton({ onClick }: BackButtonProps) {

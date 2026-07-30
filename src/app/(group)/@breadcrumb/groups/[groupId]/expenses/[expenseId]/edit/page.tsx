@@ -1,5 +1,5 @@
 import { GroupBreadcrumbs } from "@/components/shared/group-breadcrumbs";
-import { getExpenseById } from "@/app/actions/expense.action";
+import { getExpenseById } from "@/lib/queries/expense.query";
 import { notFound } from "next/navigation";
 
 export default async function Page({

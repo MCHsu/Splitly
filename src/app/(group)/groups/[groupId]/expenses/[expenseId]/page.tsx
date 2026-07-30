@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 import { Pencil } from "lucide-react";
 
-import { getExpenseById } from "@/app/actions/expense.action";
-import { getCurrentUserId } from "@/app/actions/auth.action";
-import { ExpenseDetail } from "@/components/expense-detail/expense-detail";
+import { getExpenseById } from "@/lib/queries/expense.query";
+import { getCurrentUserId } from "@/lib/queries/auth.query";
+import { ExpenseDetail } from "@/components/expense/detail/expense-detail";
 import { PageHeader } from "@/components/shared/page-header";
 
 export default async function ExpenseDetailPage({

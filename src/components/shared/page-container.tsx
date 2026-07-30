@@ -2,7 +2,9 @@ import type { ComponentProps } from "react";
 
 import { cn } from "@/lib/utils";
 
-export function PageContainer({ className, ...props }: ComponentProps<"div">) {
+interface PageContainerProps extends ComponentProps<"div"> {}
+
+export function PageContainer({ className, ...props }: PageContainerProps) {
   return (
     <div
       className={cn(

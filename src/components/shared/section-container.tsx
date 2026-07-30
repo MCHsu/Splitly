@@ -2,7 +2,9 @@ import type { ComponentProps } from "react";
 
 import { cn } from "@/lib/utils";
 
-function SectionContainer({ className, ...props }: ComponentProps<"div">) {
+interface SectionContainerProps extends ComponentProps<"div"> {}
+
+export function SectionContainer({ className, ...props }: SectionContainerProps) {
   return (
     <div
       data-slot="section-container"
@@ -15,7 +17,12 @@ function SectionContainer({ className, ...props }: ComponentProps<"div">) {
   );
 }
 
-function SectionContainerItem({ className, ...props }: ComponentProps<"div">) {
+interface SectionContainerItemProps extends ComponentProps<"div"> {}
+
+export function SectionContainerItem({
+  className,
+  ...props
+}: SectionContainerItemProps) {
   return (
     <div
       data-slot="section-container-item"
@@ -24,5 +31,3 @@ function SectionContainerItem({ className, ...props }: ComponentProps<"div">) {
     />
   );
 }
-
-export { SectionContainer, SectionContainerItem };

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ControlledField } from "@/components/shared/form/controlled-field";
-import { BaseInput } from "@/components/shared/form//base-input";
+import { BaseInput } from "@/components/shared/form/base-input";
 import { InputGroupButton } from "@/components/ui/input-group";
 import { Eye, EyeOff } from "lucide-react";
 import { FieldValues, Path } from "react-hook-form";
@@ -16,12 +16,12 @@ interface PasswordFieldProps<T extends FieldValues> extends Omit<
   description?: string;
 }
 
-export const PasswordField = <T extends FieldValues>({
+export function PasswordField<T extends FieldValues>({
   name,
   label,
   description,
   ...props
-}: PasswordFieldProps<T>) => {
+}: PasswordFieldProps<T>) {
   const [showPassword, setShowPassword] = useState(false);
 
   const showPasswordBtn = (
@@ -48,4 +48,4 @@ export const PasswordField = <T extends FieldValues>({
       )}
     </ControlledField>
   );
-};
+}

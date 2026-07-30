@@ -26,7 +26,7 @@ interface SelectFieldProps<T extends FieldValues> {
   toUIValue?: (value: any) => string;
 }
 
-export const SelectField = <T extends FieldValues>({
+export function SelectField<T extends FieldValues>({
   name,
   label,
   description,
@@ -35,7 +35,7 @@ export const SelectField = <T extends FieldValues>({
   options,
   toFormValue,
   toUIValue,
-}: SelectFieldProps<T>) => {
+}: SelectFieldProps<T>) {
   return (
     <ControlledField name={name} label={label} description={description}>
       {({ value, onChange }) => {
@@ -72,4 +72,4 @@ export const SelectField = <T extends FieldValues>({
       }}
     </ControlledField>
   );
-};
+}

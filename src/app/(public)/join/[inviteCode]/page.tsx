@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getGroupByInviteCode } from "@/app/actions/member.action";
+import { getGroupByInviteCode } from "@/lib/queries/member.query";
 import { JoinGroupClient } from "@/components/group/join-group-client";
 
 export default async function JoinPage({

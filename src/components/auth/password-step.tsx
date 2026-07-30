@@ -2,38 +2,27 @@
 
 import { FormProvider, SubmitHandler, UseFormReturn } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { InputField } from "@/components/shared/form/input-field";
 import { Spinner } from "@/components/ui/spinner";
-import { SignUpFormData } from "@/lib/validations/auth";
+import { SignInFormData } from "@/lib/validations/auth";
 import { PasswordField } from "@/components/shared/form/password-field";
 
-interface RegisterStepProps {
-  readonly methods: UseFormReturn<SignUpFormData>;
-  readonly onSubmit: SubmitHandler<SignUpFormData>;
+interface PasswordStepProps {
+  methods: UseFormReturn<SignInFormData>;
+  onSubmit: SubmitHandler<SignInFormData>;
 }
 
-export function RegisterStep({ methods, onSubmit }: RegisterStepProps) {
+export function PasswordStep({ methods, onSubmit }: PasswordStepProps) {
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)}>
-        <div className="mb-6 flex flex-col gap-4">
-          <InputField
-            name="name"
-            label="Name"
-            type="text"
-            placeholder="Your name"
-          />
+        <div className="mb-2">
           <PasswordField
             name="password"
             label="Password"
-            placeholder="At least 8 characters"
-          />
-          <PasswordField
-            name="confirmPassword"
-            label="Confirm Password"
-            placeholder="Re-enter your password"
+            placeholder="Enter your password"
           />
         </div>
+        <div className="mb-4 text-right"></div>
 
         <Button
           type="submit"
@@ -41,7 +30,7 @@ export function RegisterStep({ methods, onSubmit }: RegisterStepProps) {
           className="h-11 w-full bg-blue-600 font-medium text-white hover:bg-blue-700"
         >
           {methods.formState.isSubmitting && <Spinner />}
-          CREATE ACCOUNT
+          SIGN IN
         </Button>
       </form>
     </FormProvider>

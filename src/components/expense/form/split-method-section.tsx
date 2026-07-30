@@ -3,7 +3,7 @@
 import { useFormContext, useWatch } from "react-hook-form";
 
 import { TabbedFieldGroup } from "@/components/shared/form/tabbed-field-group";
-import { AllocationEditor } from "@/components/expense-form/allocation-editor";
+import { AllocationEditor } from "@/components/expense/form/allocation-editor";
 import type { ExpenseFormData } from "@/lib/validations/expense";
 
 const splitMethods: {

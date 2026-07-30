@@ -1,4 +1,4 @@
-import { calculateSplit } from "@/lib/split-calculator";
+import { distributeEvenly } from "@/lib/split-calculator";
 import { fromCents, toCents } from "@/lib/money";
 import type { AllocationData } from "@/lib/validations/expense";
 
@@ -19,8 +19,8 @@ export function redistributeEqually(
     return rows.map(clearAmount);
   }
 
-  const manualTotal = fromCents(sumManualCents(rows));
-  const budget = expenseTotal - manualTotal;
+  const manualTotalCents = sumManualCents(rows);
+  const budgetCents = toCents(expenseTotal) - manualTotalCents;
 
   const selectedIndices = rows
     .map((row, index) => (row.isSelected && !row.isManual ? index : -1))
@@ -28,14 +28,13 @@ export function redistributeEqually(
 
   const numberOfPeople = selectedIndices.length;
 
-  if (numberOfPeople === 0 || budget <= 0) {
+  if (numberOfPeople === 0 || budgetCents <= 0) {
     return rows.map((row) => (row.isManual ? row : clearAmount(row)));
   }
 
-  const { amounts, remainder } = calculateSplit(
-    "EQUAL",
-    budget,
-    new Array(numberOfPeople).fill(1),
+  const { amountsInCents, remainderInCents } = distributeEvenly(
+    budgetCents,
+    numberOfPeople,
   );
 
   return rows.map((row, index) => {
@@ -47,11 +46,11 @@ export function redistributeEqually(
       return clearAmount(row);
     }
 
-    const baseAmount = amounts[selectedOrder];
-    const finalAmount =
-      selectedOrder === 0 ? baseAmount + remainder : baseAmount;
+    const baseCents = amountsInCents[selectedOrder];
+    const finalCents =
+      selectedOrder === 0 ? baseCents + remainderInCents : baseCents;
 
-    return { ...row, amount: finalAmount };
+    return { ...row, amount: fromCents(finalCents) };
   });
 }
 

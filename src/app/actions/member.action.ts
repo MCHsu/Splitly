@@ -10,12 +10,8 @@ import {
   addVirtualMemberSchema,
 } from "@/lib/validations/member";
 import { handleError } from "@/lib/utils";
-import { getCurrentUserId } from "@/app/actions/auth.action";
-import {
-  getMemberBalance,
-  getMemberExpenseCount,
-  getMemberSettlementCount,
-} from "@/lib/balance";
+import { getCurrentUserId } from "@/lib/queries/auth.query";
+import { getMemberLedger } from "@/lib/ledger";
 
 type ActionResult = {
   success: boolean;
@@ -100,20 +96,6 @@ export async function joinGroup(
   }
 }
 
-export async function getGroupByInviteCode(inviteCode: string) {
-  try {
-    const group = await prisma.group.findUnique({
-      where: { inviteCode },
-      select: { id: true, name: true, inviteCode: true },
-    });
-
-    return group;
-  } catch (error) {
-    handleError(error);
-    return null;
-  }
-}
-
 export async function addVirtualMember(
   groupId: string,
   name: string,
@@ -183,10 +165,9 @@ export async function deleteMember(
     return { success: false, error: "Member not found" };
   }
 
-  const expenseCount = await getMemberExpenseCount(memberId);
-  const settlementCount = await getMemberSettlementCount(memberId);
+  const ledger = await getMemberLedger(memberId);
 
-  if (expenseCount > 0 || settlementCount > 0) {
+  if (ledger.expenseRecordCount > 0 || ledger.settlementCount > 0) {
     return {
       success: false,
       error: "Cannot delete member with linked expenses or settlements",
@@ -237,9 +218,9 @@ export async function deactivateMember(
     return { success: false, error: "Cannot deactivate the group owner" };
   }
 
-  const balance = await getMemberBalance(memberId);
+  const ledger = await getMemberLedger(memberId);
 
-  if (balance !== 0) {
+  if (ledger.balanceInCents !== 0) {
     return {
       success: false,
       error: "Member must have a zero balance before deactivation",
@@ -284,9 +265,9 @@ export async function leaveGroup(groupId: string): Promise<ActionResult> {
     };
   }
 
-  const balance = await getMemberBalance(membership.id);
+  const ledger = await getMemberLedger(membership.id);
 
-  if (balance !== 0) {
+  if (ledger.balanceInCents !== 0) {
     return {
       success: false,
       error: "You must have a zero balance before leaving",
@@ -366,59 +347,4 @@ export async function updateGroupMembers(
     handleError(error);
     return { success: false, error: "Failed to add members" };
   }
-}
-
-export async function getGroupMembers(groupId: string): Promise<GroupMember[]> {
-  try {
-    const members = await prisma.groupMember.findMany({
-      where: { groupId },
-      orderBy: [{ isActive: "desc" }, { name: "asc" }],
-    });
-
-    return members;
-  } catch (error) {
-    handleError(error);
-    return [];
-  }
-}
-
-export async function getMemberManagementData(groupId: string) {
-  const currentUserId = await getCurrentUserId();
-
-  if (!currentUserId) {
-    return null;
-  }
-
-  const callerMembership = await prisma.groupMember.findFirst({
-    where: { groupId, userId: currentUserId, isActive: true },
-    include: { user: true },
-  });
-
-  if (!callerMembership) {
-    return null;
-  }
-
-  const members = await prisma.groupMember.findMany({
-    where: { groupId },
-    include: { user: true },
-    orderBy: [{ isActive: "desc" }, { name: "asc" }],
-  });
-
-  const balances = new Map<string, number>();
-  const expenseCounts = new Map<string, number>();
-
-  await Promise.all(
-    members.map(async (member) => {
-      balances.set(member.id, await getMemberBalance(member.id));
-      expenseCounts.set(member.id, await getMemberExpenseCount(member.id));
-    }),
-  );
-
-  return {
-    members,
-    balances: Object.fromEntries(balances),
-    expenseCounts: Object.fromEntries(expenseCounts),
-    callerMembership,
-    currentUserId,
-  };
 }

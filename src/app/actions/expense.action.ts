@@ -1,34 +1,11 @@
 "use server";
 
-import { cache } from "react";
 import { revalidatePath } from "next/cache";
 import prisma from "@/lib/prisma";
 import { handleError } from "@/lib/utils";
 import { ExpenseFormData, expenseFormSchema } from "@/lib/validations/expense";
-import { getCurrentUserId } from "@/app/actions/auth.action";
+import { getCurrentUserId } from "@/lib/queries/auth.query";
 import { toExpenseWriteData } from "@/lib/expense-form-values";
-
-export const getExpenseById = cache(async (expenseId: string) => {
-  const currentUserId = await getCurrentUserId();
-  if (!currentUserId) return null;
-
-  return prisma.expense.findFirst({
-    where: {
-      id: expenseId,
-      deletedAt: null,
-      group: {
-        members: {
-          some: { userId: currentUserId, isActive: true },
-        },
-      },
-    },
-    include: {
-      group: { select: { id: true, name: true, currency: true } },
-      payments: { include: { member: { include: { user: true } } } },
-      shares: { include: { member: { include: { user: true } } } },
-    },
-  });
-});
 
 export async function createExpense(
   groupId: string,
@@ -162,48 +139,5 @@ export async function updateExpense(
   } catch (error) {
     handleError(error);
     return { success: false as const, error: "Failed to update expense" };
-  }
-}
-
-export async function getAllExpensesForGroup(groupId: string) {
-  try {
-    const expenses = await prisma.expense.findMany({
-      where: {
-        groupId: groupId,
-        deletedAt: null,
-      },
-      include: {
-        payments: {
-          include: {
-            member: {
-              select: {
-                id: true,
-                name: true,
-                userId: true,
-              },
-            },
-          },
-        },
-        shares: {
-          include: {
-            member: {
-              select: {
-                id: true,
-                name: true,
-                userId: true,
-              },
-            },
-          },
-        },
-      },
-      orderBy: {
-        date: "desc",
-      },
-    });
-
-    return { success: true, data: expenses };
-  } catch (error) {
-    handleError(error);
-    return { success: false, error: "Failed to fetch expenses" };
   }
 }

@@ -12,7 +12,6 @@ export function LandingHeader() {
 
   const handleSignOut = async () => {
     // TODO: Implement sign out
-    console.log("Sign out");
   };
 
   return (

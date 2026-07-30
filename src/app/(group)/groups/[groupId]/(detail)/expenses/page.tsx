@@ -3,9 +3,9 @@ import Link from "next/link";
 import { PlusCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { getCurrentUserId } from "@/app/actions/auth.action";
-import { getGroupById, getGroupStats } from "@/app/actions/group.action";
-import { ExpenseList } from "@/components/expense-list";
+import { getCurrentUserId } from "@/lib/queries/auth.query";
+import { getGroupById, getGroupStats } from "@/lib/queries/group.query";
+import { ExpenseList } from "@/components/expense/expense-list";
 import { SectionContainer } from "@/components/shared/section-container";
 import { GroupSpendCard } from "@/components/group/group-spend-card";
 

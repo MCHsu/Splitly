@@ -4,7 +4,7 @@ import React from "react";
 import { FieldValues, Path } from "react-hook-form";
 
 import { ControlledField } from "@/components/shared/form/controlled-field";
-import { BaseInput } from "@/components/shared/form//base-input";
+import { BaseInput } from "@/components/shared/form/base-input";
 
 interface InputFieldProps<T extends FieldValues> extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -19,7 +19,7 @@ interface InputFieldProps<T extends FieldValues> extends Omit<
   handleOnFocus?: () => void;
 }
 
-export const InputField = <T extends FieldValues>({
+export function InputField<T extends FieldValues>({
   name,
   label,
   description,
@@ -28,7 +28,7 @@ export const InputField = <T extends FieldValues>({
   handleOnBlur = () => {},
   handleOnFocus = () => {},
   ...props
-}: InputFieldProps<T>) => {
+}: InputFieldProps<T>) {
   return (
     <ControlledField name={name} label={label} description={description}>
       {(field) => (
@@ -47,4 +47,4 @@ export const InputField = <T extends FieldValues>({
       )}
     </ControlledField>
   );
-};
+}

@@ -1,8 +1,9 @@
 import * as z from "zod";
 
+import { SplitMethod } from "@/generated/prisma/enums";
 import { isTwoDecimalPlaces, sumSelectedCents, toCents } from "@/lib/money";
 
-export const SplitMethodSchema = z.enum(["SHARES", "EXACT"]);
+export const SplitMethodSchema = z.nativeEnum(SplitMethod);
 
 export const AllocationSchema = z.object({
   memberId: z.string(),

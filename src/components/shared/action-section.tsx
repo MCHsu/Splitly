@@ -12,7 +12,7 @@ interface ActionSectionProps {
   disabled?: boolean;
 }
 
-function ActionSection({
+export function ActionSection({
   title,
   description,
   actionLabel,
@@ -46,5 +46,3 @@ function ActionSection({
     </SectionContainer>
   );
 }
-
-export { ActionSection };

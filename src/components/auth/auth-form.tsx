@@ -6,10 +6,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 
 import { Logo } from "@/components/shared/logo";
-import { BackButton } from "@/components/auth-form/back-button";
-import { EmailStep } from "@/components/auth-form/email-step";
-import { PasswordStep } from "@/components/auth-form/password-step";
-import { RegisterStep } from "@/components/auth-form/register-step";
+import { BackButton } from "@/components/auth/back-button";
+import { EmailStep } from "@/components/auth/email-step";
+import { PasswordStep } from "@/components/auth/password-step";
+import { RegisterStep } from "@/components/auth/register-step";
 import { SectionContainer } from "@/components/shared/section-container";
 import {
   emailStepSchema,

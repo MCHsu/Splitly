@@ -1,5 +1,3 @@
-"use client";
-
 import { format } from "date-fns";
 import Link from "next/link";
 import {
@@ -13,35 +11,10 @@ import {
 import { formatMoneyFromCents } from "@/lib/money";
 import type { GroupMemberWithUser } from "@/lib/member";
 import { cn } from "@/lib/utils";
-
-interface ExpenseItem {
-  id: string;
-  date: Date;
-  description: string;
-  amountInCents: number;
-  category?: string | null;
-  payments?: {
-    amountInCents: number;
-    member: {
-      id?: string;
-      name: string;
-      isActive?: boolean;
-      userId?: string | null;
-    };
-  }[];
-  shares?: {
-    amountInCents: number;
-    member: {
-      id?: string;
-      name: string;
-      isActive?: boolean;
-      userId?: string | null;
-    };
-  }[];
-}
+import type { ExpenseListItem } from "@/types/expense";
 
 interface ExpenseListProps {
-  expenses: ExpenseItem[];
+  expenses: ExpenseListItem[];
   groupId?: string;
   members?: GroupMemberWithUser[];
   currentUserId?: string | null;
@@ -84,7 +57,7 @@ export function ExpenseList({
       acc[dayKey].push(expense);
       return acc;
     },
-    {} as Record<string, ExpenseItem[]>,
+    {} as Record<string, ExpenseListItem[]>,
   );
 
   return (

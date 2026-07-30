@@ -10,15 +10,15 @@ interface TextareaFieldProps<T extends FieldValues> {
   disabled?: boolean;
 }
 
-export const TextareaField = <T extends FieldValues>({
+export function TextareaField<T extends FieldValues>({
   name,
   label,
   description,
   ...props
-}: TextareaFieldProps<T>) => {
+}: TextareaFieldProps<T>) {
   return (
     <ControlledField name={name} label={label} description={description}>
       {(field) => <Textarea {...field} {...props} />}
     </ControlledField>
   );
-};
+}

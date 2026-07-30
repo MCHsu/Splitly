@@ -20,7 +20,6 @@ import {
   leaveGroup,
 } from "@/app/actions/member.action";
 import type { GroupMemberWithUser } from "@/lib/member";
-import { formatMoneyFromCents } from "@/lib/money";
 import { cn } from "@/lib/utils";
 import { useGroup } from "@/providers/group-provider";
 
@@ -48,7 +47,13 @@ export function MemberManagementList({
 
   const isOwner = callerMembership.role === "OWNER";
 
-  const handleAction = (action: () => Promise<{ success: boolean; error?: string; groupId?: string }>) => {
+  const handleAction = (
+    action: () => Promise<{
+      success: boolean;
+      error?: string;
+      groupId?: string;
+    }>,
+  ) => {
     setError(null);
     startTransition(async () => {
       const result = await action();
@@ -104,8 +109,6 @@ export function MemberManagementList({
                   </p>
                   <p className="text-xs text-gray-500">
                     {member.role === "OWNER" ? "Owner" : "Member"}
-                    {balance !== 0 &&
-                      ` · Balance: ${formatMoneyFromCents(balance, { currencyCode: currency })}`}
                   </p>
                 </div>
               </div>

@@ -24,12 +24,12 @@ interface ControlledFieldProps<T extends FieldValues> {
   ) => React.ReactNode;
 }
 
-export const ControlledField = <T extends FieldValues>({
+export function ControlledField<T extends FieldValues>({
   name,
   label,
   description,
   children,
-}: ControlledFieldProps<T>) => {
+}: ControlledFieldProps<T>) {
   const { control } = useFormContext();
   const { field, fieldState } = useController({ name, control });
 
@@ -43,4 +43,4 @@ export const ControlledField = <T extends FieldValues>({
       {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
     </Field>
   );
-};
+}

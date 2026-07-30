@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
 import { Trash2, DoorOpen } from "lucide-react";
 
-import { getGroupById, updateGroup } from "@/app/actions/group.action";
-import { GroupForm } from "@/components/group-form/group-form";
+import { updateGroup } from "@/app/actions/group.action";
+import { getGroupById } from "@/lib/queries/group.query";
+import { GroupForm } from "@/components/group/group-form";
 import { ActionSection } from "@/components/shared/action-section";
 import { InviteLinkButton } from "@/components/group/invite-link-button";
 import type { GroupFormData } from "@/lib/validations/group";

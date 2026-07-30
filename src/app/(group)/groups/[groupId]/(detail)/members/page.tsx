@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { getMemberManagementData } from "@/app/actions/member.action";
+import { getMemberManagementData } from "@/lib/queries/member.query";
 import { ManageMembersClient } from "@/components/group/manage-members-client";
 
 export default async function GroupMembersPage({

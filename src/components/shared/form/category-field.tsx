@@ -24,10 +24,10 @@ interface CategoryFieldProps<T extends FieldValues> {
   label?: string;
 }
 
-export const CategoryField = <T extends FieldValues>({
+export function CategoryField<T extends FieldValues>({
   name,
   label = "Category",
-}: CategoryFieldProps<T>) => {
+}: CategoryFieldProps<T>) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -105,4 +105,4 @@ export const CategoryField = <T extends FieldValues>({
       }}
     </ControlledField>
   );
-};
+}

@@ -5,7 +5,7 @@ import { useFormContext } from "react-hook-form";
 
 import { TabbedFieldGroup } from "@/components/shared/form/tabbed-field-group";
 import { SelectField } from "@/components/shared/form/select-field";
-import { AllocationEditor } from "@/components/expense-form/allocation-editor";
+import { AllocationEditor } from "@/components/expense/form/allocation-editor";
 import { UserAvatar } from "@/components/shared/user-avatar";
 import { assignAllToOne } from "@/lib/allocation";
 import { getMemberDisplayName } from "@/lib/member";
@@ -20,9 +20,9 @@ const paidByModes = [
 type PaidByMode = (typeof paidByModes)[number]["value"];
 
 interface PaidBySectionProps {
-  readonly name: string;
-  readonly total: number;
-  readonly currency?: string;
+  name: string;
+  total: number;
+  currency?: string;
 }
 
 export function PaidBySection({ name, total, currency }: PaidBySectionProps) {

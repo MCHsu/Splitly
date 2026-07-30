@@ -1,32 +1,12 @@
 import { fromCents, toCents } from "@/lib/money";
-import { calculateSplit } from "@/lib/split-calculator";
+import { distributeEvenly } from "@/lib/split-calculator";
 import type {
   AllocationData,
   ExpenseFormData,
 } from "@/lib/validations/expense";
+import type { ExpenseForForm } from "@/types/expense";
 
 type MemberRef = { id: string };
-
-type PaymentRow = {
-  amountInCents: number;
-  memberId: string;
-};
-
-type ShareRow = {
-  amountInCents: number;
-  memberId: string;
-};
-
-type ExpenseForForm = {
-  description: string;
-  amountInCents: number;
-  date: Date;
-  category: string | null;
-  note: string | null;
-  splitMethod: "SHARES" | "EXACT";
-  payments: PaymentRow[];
-  shares: ShareRow[];
-};
 
 export type ExpenseWriteData = {
   amountInCents: number;
@@ -35,7 +15,7 @@ export type ExpenseWriteData = {
 };
 
 /**
- * True when stored cents match what EQUAL split would produce
+ * True when stored cents match what an even split would produce
  * (remainder on the first selected row). Compare as a cents multiset —
  * DB row order may not match form field order.
  */
@@ -45,16 +25,13 @@ function matchesEqualSplit(
 ): boolean {
   if (selected.length === 0) return false;
 
-  const { amounts, remainder } = calculateSplit(
-    "EQUAL",
-    fromCents(amountInCents),
-    new Array(selected.length).fill(1),
+  const { amountsInCents, remainderInCents } = distributeEvenly(
+    amountInCents,
+    selected.length,
   );
 
-  const expected = amounts
-    .map((amount, index) =>
-      toCents(index === 0 ? amount + remainder : amount),
-    )
+  const expected = amountsInCents
+    .map((cents, index) => (index === 0 ? cents + remainderInCents : cents))
     .sort((a, b) => a - b);
   const actual = selected
     .map((row) => row.amountInCents)

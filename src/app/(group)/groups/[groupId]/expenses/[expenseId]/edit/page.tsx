@@ -1,8 +1,9 @@
 import { notFound, redirect } from "next/navigation";
 
-import { getExpenseById, updateExpense } from "@/app/actions/expense.action";
-import { getGroupById } from "@/app/actions/group.action";
-import { ExpenseForm } from "@/components/expense-form/expense-form";
+import { updateExpense } from "@/app/actions/expense.action";
+import { getExpenseById } from "@/lib/queries/expense.query";
+import { getGroupById } from "@/lib/queries/group.query";
+import { ExpenseForm } from "@/components/expense/form/expense-form";
 import { PageHeader } from "@/components/shared/page-header";
 import { toExpenseFormValues } from "@/lib/expense-form-values";
 import type { ExpenseFormData } from "@/lib/validations/expense";
