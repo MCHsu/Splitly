@@ -62,7 +62,7 @@ export function GroupForm({
     <SectionContainer>
       <FormLayout methods={methods} onSubmit={onSubmit}>
         <FormLayout.Section>
-          <div className="flex flex-col md:flex-row gap-4 md:gap-6 lg:gap-10">
+          <div className="flex flex-col gap-4 md:flex-row md:gap-6 lg:gap-10">
             <InputField
               name="name"
               label="Group Name"

@@ -36,14 +36,14 @@ export function AllocationRow({
     <div className="flex items-center gap-4">
       <Checkbox
         checked={isSelected}
-        className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+        className="data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600"
         onCheckedChange={(checked) => onToggle(checked === true)}
       />
 
-      <div className="flex items-center gap-3 w-50">
+      <div className="flex w-50 items-center gap-3">
         <div className="flex flex-row items-center gap-2">
           <UserAvatar name={displayName} size="sm" />
-          <span className="font-semibold text-sm text-gray-900">
+          <span className="text-sm font-semibold text-gray-900">
             {displayName}
           </span>
         </div>

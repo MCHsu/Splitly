@@ -42,7 +42,7 @@ export function LedgerColumn({
               aria-hidden
               className="min-w-2 flex-1 border-b border-dotted border-muted-foreground/40"
             />
-            <span className="tabular-nums text-lg font-bold">
+            <span className="text-lg font-bold tabular-nums">
               {formatMoneyFromCents(entry.amountInCents, {
                 currencyCode: currency,
               })}

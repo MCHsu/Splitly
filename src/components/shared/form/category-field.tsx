@@ -67,7 +67,7 @@ export const CategoryField = <T extends FieldValues>({
               className="w-[var(--radix-popover-trigger-width)] p-2"
               align="start"
             >
-              <div className="grid gap-1 grid-cols-3 xl:grid-cols-4">
+              <div className="grid grid-cols-3 gap-1 xl:grid-cols-4">
                 {EXPENSE_CATEGORIES.map((category) => {
                   const Icon = category.icon;
                   const isActive = resolvedValue === category.value;

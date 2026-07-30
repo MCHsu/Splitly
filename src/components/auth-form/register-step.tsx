@@ -16,7 +16,7 @@ export function RegisterStep({ methods, onSubmit }: RegisterStepProps) {
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)}>
-        <div className="flex flex-col gap-4 mb-6">
+        <div className="mb-6 flex flex-col gap-4">
           <InputField
             name="name"
             label="Name"
@@ -38,7 +38,7 @@ export function RegisterStep({ methods, onSubmit }: RegisterStepProps) {
         <Button
           type="submit"
           disabled={methods.formState.isSubmitting}
-          className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-medium"
+          className="h-11 w-full bg-blue-600 font-medium text-white hover:bg-blue-700"
         >
           {methods.formState.isSubmitting && <Spinner />}
           CREATE ACCOUNT

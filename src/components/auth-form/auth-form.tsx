@@ -128,11 +128,11 @@ export function AuthForm() {
     step === "email" ? "Enter your email to continue" : emailValue;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md">
         <SectionContainer>
-          <div className="flex flex-col items-center justify-between mb-6">
-            <div className="w-full flex justify-start">
+          <div className="mb-6 flex flex-col items-center justify-between">
+            <div className="flex w-full justify-start">
               {/* {step !== "email" && <BackButton onClick={handleBack} />} */}
               <BackButton onClick={handleBack} />
             </div>
@@ -142,21 +142,21 @@ export function AuthForm() {
             </div>
           </div>
 
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-semibold text-gray-900 mb-1">
+          <div className="mb-8 text-center">
+            <h1 className="mb-1 text-2xl font-semibold text-gray-900">
               {title}
             </h1>
-            <p className="text-gray-600 text-sm">{subtitle}</p>
+            <p className="text-sm text-gray-600">{subtitle}</p>
           </div>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+            <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3">
               <p className="text-sm text-red-600">{error}</p>
             </div>
           )}
 
           {successMessage && (
-            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-md">
+            <div className="mb-4 rounded-md border border-green-200 bg-green-50 p-3">
               <p className="text-sm text-green-600">{successMessage}</p>
             </div>
           )}

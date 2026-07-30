@@ -45,7 +45,7 @@ export function GroupDetailTabs({ groupId, className }: GroupDetailTabsProps) {
               <TabsTrigger
                 key={tab.segment}
                 value={tab.segment}
-                className="border-0 group-data-horizontal/tabs:after:-bottom-[0.5px] text-sm md:text-base font-medium data-[state=active]:font-bold"
+                className="border-0 text-sm font-medium group-data-horizontal/tabs:after:-bottom-[0.5px] data-[state=active]:font-bold md:text-base"
                 asChild
               >
                 <Link href={href}>{tab.label}</Link>

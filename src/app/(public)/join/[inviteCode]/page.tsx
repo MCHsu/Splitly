@@ -14,7 +14,5 @@ export default async function JoinPage({
     notFound();
   }
 
-  return (
-    <JoinGroupClient inviteCode={inviteCode} groupName={group.name} />
-  );
+  return <JoinGroupClient inviteCode={inviteCode} groupName={group.name} />;
 }

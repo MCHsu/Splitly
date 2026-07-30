@@ -24,7 +24,7 @@ function ActionSection({
     <SectionContainer>
       <div className="flex items-center justify-between gap-4 md:gap-6">
         {icon && (
-          <div className="flex items-center gap-2 size-4 md:size-5 lg:size-6">
+          <div className="flex size-4 items-center gap-2 md:size-5 lg:size-6">
             {icon}
           </div>
         )}

@@ -10,28 +10,28 @@ export default function Landing() {
       <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
         {/* Hero Section */}
         <div className="container mx-auto px-4 py-20">
-          <div className="max-w-4xl mx-auto text-center">
+          <div className="mx-auto max-w-4xl text-center">
             <div className="mb-8 flex justify-center">
               <div className="flex items-center gap-0">
-                <div className="w-16 h-16 rounded-full bg-blue-400 opacity-80" />
-                <div className="w-16 h-16 rounded-full bg-orange-500 -ml-6" />
+                <div className="h-16 w-16 rounded-full bg-blue-400 opacity-80" />
+                <div className="-ml-6 h-16 w-16 rounded-full bg-orange-500" />
               </div>
             </div>
 
-            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+            <h1 className="mb-6 text-5xl font-bold text-gray-900 md:text-6xl">
               Split Bills with Ease
             </h1>
 
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+            <p className="mx-auto mb-8 max-w-2xl text-xl text-gray-600">
               The simplest way to share expenses with friends, roommates, and
               travel companions. Track who paid what and settle up effortlessly.
             </p>
 
-            <div className="flex gap-4 justify-center">
+            <div className="flex justify-center gap-4">
               <Link href="/auth">
                 <Button
                   size="lg"
-                  className="bg-blue-600 hover:bg-blue-700 h-12 px-8"
+                  className="h-12 bg-blue-600 px-8 hover:bg-blue-700"
                 >
                   Get Started Free
                   <ArrowRight className="ml-2 h-5 w-5" />
@@ -48,17 +48,17 @@ export default function Landing() {
 
         {/* Features Section */}
         <div className="container mx-auto px-4 py-16">
-          <div className="max-w-5xl mx-auto">
-            <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+          <div className="mx-auto max-w-5xl">
+            <h2 className="mb-12 text-center text-3xl font-bold text-gray-900">
               Why Choose Splitly?
             </h2>
 
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+            <div className="grid gap-8 md:grid-cols-3">
+              <div className="rounded-lg border border-gray-100 bg-white p-6 shadow-sm">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
                   <Receipt className="h-6 w-6 text-blue-600" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                <h3 className="mb-2 text-xl font-semibold text-gray-900">
                   Track Expenses
                 </h3>
                 <p className="text-gray-600">
@@ -67,11 +67,11 @@ export default function Landing() {
                 </p>
               </div>
 
-              <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
+              <div className="rounded-lg border border-gray-100 bg-white p-6 shadow-sm">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-orange-100">
                   <Users className="h-6 w-6 text-orange-600" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                <h3 className="mb-2 text-xl font-semibold text-gray-900">
                   Multiple Groups
                 </h3>
                 <p className="text-gray-600">
@@ -80,11 +80,11 @@ export default function Landing() {
                 </p>
               </div>
 
-              <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+              <div className="rounded-lg border border-gray-100 bg-white p-6 shadow-sm">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
                   <PieChart className="h-6 w-6 text-green-600" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                <h3 className="mb-2 text-xl font-semibold text-gray-900">
                   Smart Split Methods
                 </h3>
                 <p className="text-gray-600">
@@ -98,19 +98,19 @@ export default function Landing() {
 
         {/* CTA Section */}
         <div className="container mx-auto px-4 py-16">
-          <div className="max-w-3xl mx-auto bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-12 text-center text-white">
-            <Sparkles className="h-12 w-12 mx-auto mb-4" />
-            <h2 className="text-3xl font-bold mb-4">
+          <div className="mx-auto max-w-3xl rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 p-12 text-center text-white">
+            <Sparkles className="mx-auto mb-4 h-12 w-12" />
+            <h2 className="mb-4 text-3xl font-bold">
               Ready to Simplify Your Expenses?
             </h2>
-            <p className="text-blue-100 mb-8 text-lg">
+            <p className="mb-8 text-lg text-blue-100">
               Join thousands of users who are already splitting bills the smart
               way.
             </p>
             <Link href="/auth">
               <Button
                 size="lg"
-                className="bg-white text-blue-600 hover:bg-gray-100 h-12 px-8"
+                className="h-12 bg-white px-8 text-blue-600 hover:bg-gray-100"
               >
                 Start Splitting Now
                 <ArrowRight className="ml-2 h-5 w-5" />

@@ -30,10 +30,7 @@ export default async function GroupBalancePage({
   }
 
   const nameById = new Map(
-    group.members.map((member) => [
-      member.id,
-      getMemberDisplayName(member),
-    ]),
+    group.members.map((member) => [member.id, getMemberDisplayName(member)]),
   );
 
   const chartData: BalanceChartDatum[] = group.members.map((member) => ({

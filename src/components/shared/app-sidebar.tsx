@@ -31,7 +31,7 @@ const items = [
 export function AppSidebar() {
   return (
     <Sidebar>
-      <SidebarHeader className="pt-6 pb4 px-4">
+      <SidebarHeader className="pb4 px-4 pt-6">
         <Logo />
       </SidebarHeader>
       {/* Sidebar content */}

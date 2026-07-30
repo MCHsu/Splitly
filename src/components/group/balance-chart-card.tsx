@@ -58,7 +58,10 @@ export function BalanceChartCard({
             Everyone is settled up.
           </p>
         ) : (
-          <ChartContainer config={chartConfig} className="aspect-auto h-64 w-full">
+          <ChartContainer
+            config={chartConfig}
+            className="aspect-auto h-64 w-full"
+          >
             <BarChart
               accessibilityLayer
               data={data}

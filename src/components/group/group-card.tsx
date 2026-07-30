@@ -8,18 +8,23 @@ interface GroupCardProps {
   expenseCount: number;
 }
 
-export function GroupCard({ id, name, memberCount, expenseCount }: GroupCardProps) {
+export function GroupCard({
+  id,
+  name,
+  memberCount,
+  expenseCount,
+}: GroupCardProps) {
   return (
     <Link href={`/groups/${id}`}>
-      <div className="flex items-center justify-between bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow cursor-pointer">
+      <div className="flex cursor-pointer items-center justify-between rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-lg">
         <div>
-          <h2 className="text-xl font-semibold mb-2">{name}</h2>
-          <div className="text-sm text-gray-600 space-y-1">
+          <h2 className="mb-2 text-xl font-semibold">{name}</h2>
+          <div className="space-y-1 text-sm text-gray-600">
             <p>{memberCount} members</p>
             <p>{expenseCount} expenses</p>
           </div>
         </div>
-        <ChevronRight className="size-5 text-gray-400 shrink-0" />
+        <ChevronRight className="size-5 shrink-0 text-gray-400" />
       </div>
     </Link>
   );

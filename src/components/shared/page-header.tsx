@@ -19,9 +19,9 @@ export function PageHeader({ title, subtitle, action }: PageHeaderProps) {
   const Icon = action?.icon;
 
   return (
-    <div className="flex flex-col gap-4 mb-6 lg:mb-12">
+    <div className="mb-6 flex flex-col gap-4 lg:mb-12">
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl md:text-4xl font-bold">{title}</h1>
+        <h1 className="text-2xl font-bold md:text-4xl">{title}</h1>
 
         {action ? (
           <Button asChild className={cn("shrink-0", action.className)}>

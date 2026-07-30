@@ -75,13 +75,13 @@ function FormLayoutHeader({
   return (
     <div className={className}>
       <Button variant="ghost" className="mb-4" onClick={() => router.back()}>
-        <ArrowLeft className="h-4 w-4 mr-2" />
+        <ArrowLeft className="mr-2 h-4 w-4" />
         Back
       </Button>
 
-      {title && <h2 className="text-3xl font-bold mb-2">{title}</h2>}
+      {title && <h2 className="mb-2 text-3xl font-bold">{title}</h2>}
 
-      {description && <p className="text-gray-600 mb-8">{description}</p>}
+      {description && <p className="mb-8 text-gray-600">{description}</p>}
     </div>
   );
 }

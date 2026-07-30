@@ -87,7 +87,7 @@ export function JoinGroupClient({
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 to-white p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-blue-50 to-white p-4">
       <div className="fixed inset-0 bg-black/40" aria-hidden />
 
       <Card className="relative z-10 w-full max-w-md">

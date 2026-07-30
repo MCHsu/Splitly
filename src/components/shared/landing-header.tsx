@@ -30,7 +30,7 @@ export function LandingHeader() {
                   <Button variant="ghost">My Groups</Button>
                 </Link>
                 <Button variant="ghost" onClick={handleSignOut}>
-                  <LogOut className="h-4 w-4 mr-2" />
+                  <LogOut className="mr-2 h-4 w-4" />
                   Sign Out
                 </Button>
               </>

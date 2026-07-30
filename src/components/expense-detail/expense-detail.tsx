@@ -158,7 +158,7 @@ export function ExpenseDetail({
             title="Split between"
             entries={splitEntries}
             currency={currency}
-            className="lg:pl-10 lg:border-l"
+            className="lg:border-l lg:pl-10"
           />
         </div>
 
