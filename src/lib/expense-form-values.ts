@@ -16,8 +16,8 @@ export type ExpenseWriteData = {
 
 /**
  * True when stored cents match what an even split would produce
- * (remainder on the first selected row). Compare as a cents multiset —
- * DB row order may not match form field order.
+ * (leftover cents spread +1 each across the first selected rows).
+ * Compare as a cents multiset — DB row order may not match form field order.
  */
 function matchesEqualSplit(
   amountInCents: number,
@@ -25,14 +25,9 @@ function matchesEqualSplit(
 ): boolean {
   if (selected.length === 0) return false;
 
-  const { amountsInCents, remainderInCents } = distributeEvenly(
-    amountInCents,
-    selected.length,
+  const expected = distributeEvenly(amountInCents, selected.length).sort(
+    (a, b) => a - b,
   );
-
-  const expected = amountsInCents
-    .map((cents, index) => (index === 0 ? cents + remainderInCents : cents))
-    .sort((a, b) => a - b);
   const actual = selected
     .map((row) => row.amountInCents)
     .sort((a, b) => a - b);

@@ -7,7 +7,11 @@ import { NumericFormat } from "react-number-format";
 import { ControlledField } from "@/components/shared/form/controlled-field";
 import { BaseInput } from "@/components/shared/form/base-input";
 import { InputGroupText } from "@/components/ui/input-group";
-import { DEFAULT_CURRENCY, DEFAULT_LOCALE } from "@/lib/money";
+import {
+  DEFAULT_CURRENCY,
+  DEFAULT_LOCALE,
+  MONEY_DECIMAL_PLACES,
+} from "@/lib/money";
 
 interface AmountFieldProps<T extends FieldValues> extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -30,27 +34,23 @@ export function AmountField<T extends FieldValues>({
   handleOnFocus = () => {},
   ...props
 }: AmountFieldProps<T>) {
-  const { symbol, decimals, thousandSep, decimalSep } = useMemo(() => {
+  const { symbol, thousandSep, decimalSep } = useMemo(() => {
     const formatter = new Intl.NumberFormat(locale, {
       style: "currency",
       currency: currencyCode,
     });
 
-    // 取得小數限制 (例如 JPY 是 0，EUR 是 2)
-    const decimals = formatter.resolvedOptions().maximumFractionDigits ?? 0;
-
-    // 故意丟一個有千分位又有小數的數字進去，讓 Intl 幫我們拆解格式
+    // Intentional: format a number with group + fraction so Intl yields separators
     const parts = formatter.formatToParts(1234.56);
 
-    const groupPart = parts.find((p) => p.type === "group"); // 千分位
-    const decimalPart = parts.find((p) => p.type === "decimal"); // 小數點
-    const currencyPart = parts.find((p) => p.type === "currency"); // 幣別符號
+    const groupPart = parts.find((p) => p.type === "group");
+    const decimalPart = parts.find((p) => p.type === "decimal");
+    const currencyPart = parts.find((p) => p.type === "currency");
 
     return {
-      decimals,
       symbol: currencyPart ? currencyPart.value : "$",
       thousandSep: groupPart ? groupPart.value : ",",
-      // 如果該幣別沒有小數 (如 JPY)，找不到 decimalPart 時退回預設 "."
+      // Currencies without a fraction part (e.g. JPY) may omit decimal; default "."
       decimalSep: decimalPart ? decimalPart.value : ".",
     };
   }, [currencyCode, locale]);
@@ -77,7 +77,7 @@ export function AmountField<T extends FieldValues>({
           type="text"
           thousandSeparator={thousandSep}
           decimalSeparator={decimalSep}
-          decimalScale={decimals}
+          decimalScale={MONEY_DECIMAL_PLACES}
           allowNegative={false}
           value={value ?? ""}
           onValueChange={(values) => {

@@ -32,10 +32,7 @@ export function redistributeEqually(
     return rows.map((row) => (row.isManual ? row : clearAmount(row)));
   }
 
-  const { amountsInCents, remainderInCents } = distributeEvenly(
-    budgetCents,
-    numberOfPeople,
-  );
+  const amountsInCents = distributeEvenly(budgetCents, numberOfPeople);
 
   return rows.map((row, index) => {
     if (row.isManual) return row;
@@ -46,11 +43,7 @@ export function redistributeEqually(
       return clearAmount(row);
     }
 
-    const baseCents = amountsInCents[selectedOrder];
-    const finalCents =
-      selectedOrder === 0 ? baseCents + remainderInCents : baseCents;
-
-    return { ...row, amount: fromCents(finalCents) };
+    return { ...row, amount: fromCents(amountsInCents[selectedOrder]) };
   });
 }
 

@@ -5,6 +5,8 @@ export interface MoneyFormatOptions {
 
 export const DEFAULT_CURRENCY = "TWD";
 export const DEFAULT_LOCALE = "zh-TW";
+/** App-wide money precision; ignore CLDR (TWD is 0) so splits/inputs keep cents. */
+export const MONEY_DECIMAL_PLACES = 2;
 
 /** Amounts travel through the form as strings (`"1234.5"`), so normalise before comparing. */
 export const toCents = (value: number | string | null | undefined) =>
@@ -54,5 +56,5 @@ export const formatMoneyFromCents = (
     style: "currency",
     currency: currencyCode,
     minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
+    maximumFractionDigits: MONEY_DECIMAL_PLACES,
   }).format(fromCents(cents));
