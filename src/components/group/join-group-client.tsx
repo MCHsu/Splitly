@@ -16,6 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
+import { StatusMessage } from "@/components/shared/status-message";
 
 interface JoinGroupClientProps {
   inviteCode: string;
@@ -87,8 +88,8 @@ export function JoinGroupClient({
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-blue-50 to-white p-4">
-      <div className="fixed inset-0 bg-black/40" aria-hidden />
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-primary/5 to-background p-4">
+      <div className="fixed inset-0 bg-overlay" aria-hidden />
 
       <Card className="relative z-10 w-full max-w-md">
         <CardHeader>
@@ -116,7 +117,7 @@ export function JoinGroupClient({
                   autoFocus
                 />
               </div>
-              {error && <p className="text-sm text-red-600">{error}</p>}
+              {error && <StatusMessage tone="error">{error}</StatusMessage>}
             </CardContent>
             <CardFooter>
               <Button

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { PlusCircle } from "lucide-react";
+import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { getCurrentUserId } from "@/lib/queries/auth.query";
@@ -35,12 +35,12 @@ export default async function GroupExpensesPage({
     return (
       <SectionContainer>
         <div className="flex flex-col items-center justify-center gap-4 md:gap-5 lg:gap-6">
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             No expenses yet. Add an expense to get started.
           </p>
           <Link href={`/groups/${groupId}/expenses/new`}>
             <Button>
-              <PlusCircle />
+              <Plus />
               New Expense
             </Button>
           </Link>

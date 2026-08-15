@@ -78,7 +78,7 @@ export function ExpenseForm({
     getValues,
   } = methods;
 
-  const actionText = mode === "edit" ? "Update" : "Submit";
+  const actionText = mode === "edit" ? "Update" : "Create";
 
   const onSubmit: SubmitHandler<ExpenseFormData> = async (data) => {
     if (onSubmitProp) {
@@ -156,4 +156,3 @@ export function ExpenseForm({
     </SectionContainer>
   );
 }
-

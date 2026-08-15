@@ -32,7 +32,7 @@ export function PageHeader({ title, subtitle, action }: PageHeaderProps) {
           </Button>
         ) : null}
       </div>
-      {subtitle ? <p className="text-gray-600">{subtitle}</p> : null}
+      {subtitle ? <p className="text-muted-foreground">{subtitle}</p> : null}
     </div>
   );
 }

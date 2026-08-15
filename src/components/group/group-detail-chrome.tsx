@@ -1,4 +1,4 @@
-import { CirclePlus } from "lucide-react";
+import { Plus } from "lucide-react";
 
 import { GroupDetailMobileCta } from "@/components/group/group-detail-mobile-cta";
 import { GroupDetailTabs } from "@/components/group/group-detail-tabs";
@@ -22,7 +22,7 @@ export function GroupDetailChrome({
         action={{
           href: `/groups/${groupId}/expenses/new`,
           label: "New Expense",
-          icon: CirclePlus,
+          icon: Plus,
           className: "hidden md:inline-flex",
         }}
       />

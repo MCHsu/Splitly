@@ -22,6 +22,7 @@ import {
 import type { GroupMemberWithUser } from "@/lib/member";
 import { cn } from "@/lib/utils";
 import { useGroup } from "@/providers/group-provider";
+import { StatusMessage } from "@/components/shared/status-message";
 
 interface MemberManagementListProps {
   groupId: string;
@@ -67,7 +68,7 @@ export function MemberManagementList({
 
   return (
     <div className="space-y-4">
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <StatusMessage tone="error">{error}</StatusMessage>}
 
       <SectionContainer className="divide-y">
         {members.map((member) => {
@@ -92,22 +93,22 @@ export function MemberManagementList({
                   <p className="truncate font-medium">
                     {member.name}
                     {!member.isActive && (
-                      <span className="ml-2 text-xs font-normal text-gray-500">
+                      <span className="ml-2 text-xs font-normal text-muted-foreground">
                         (Inactive)
                       </span>
                     )}
                     {isSelf && (
-                      <span className="ml-2 text-xs font-normal text-blue-600">
+                      <span className="ml-2 text-xs font-normal text-primary">
                         (You)
                       </span>
                     )}
                     {isVirtual && (
-                      <span className="ml-2 text-xs font-normal text-gray-400">
+                      <span className="ml-2 text-xs font-normal text-muted-foreground/70">
                         (Virtual)
                       </span>
                     )}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted-foreground">
                     {member.role === "OWNER" ? "Owner" : "Member"}
                   </p>
                 </div>

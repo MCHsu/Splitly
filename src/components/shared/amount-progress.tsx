@@ -12,27 +12,27 @@ type BalanceStatus = "empty" | "under" | "over" | "balanced";
 
 const tones = {
   empty: {
-    accent: "text-gray-500",
-    track: "bg-gray-200",
-    fill: "bg-gray-300",
+    accent: "text-muted-foreground",
+    track: "bg-muted-foreground/15",
+    fill: "bg-muted-foreground/30",
     Icon: CircleDashed,
   },
   under: {
-    accent: "text-amber-600",
-    track: "bg-gray-200",
-    fill: "bg-amber-500",
+    accent: "text-warning",
+    track: "bg-muted-foreground/15",
+    fill: "bg-warning",
     Icon: TriangleAlert,
   },
   over: {
-    accent: "text-rose-600",
-    track: "bg-rose-100",
-    fill: "bg-rose-500",
+    accent: "text-destructive",
+    track: "bg-destructive/10",
+    fill: "bg-destructive",
     Icon: TriangleAlert,
   },
   balanced: {
-    accent: "text-emerald-600",
-    track: "bg-emerald-100",
-    fill: "bg-emerald-500",
+    accent: "text-success",
+    track: "bg-success/10",
+    fill: "bg-success",
     Icon: CheckCircle2,
   },
 } as const;
@@ -87,13 +87,13 @@ export function AmountProgress({
   return (
     <div className={cn("space-y-2 text-left", className)}>
       <div className="flex items-end justify-between gap-3">
-        <span className="text-sm font-medium text-gray-900">{label}</span>
+        <span className="text-sm font-medium text-foreground">{label}</span>
         <p className="tabular-nums">
           <span className={cn("text-lg font-bold tracking-tight", accent)}>
             {money(currentCents)}
           </span>
-          <span className="mx-1 text-sm text-gray-400">/</span>
-          <span className="text-sm font-semibold text-gray-900">
+          <span className="mx-1 text-sm text-muted-foreground/70">/</span>
+          <span className="text-sm font-semibold text-foreground">
             {money(targetCents)}
           </span>
         </p>
@@ -119,7 +119,7 @@ export function AmountProgress({
         {status === "over" && (
           <span
             aria-hidden
-            className="absolute inset-y-0 w-0.5 bg-white/90"
+            className="absolute inset-y-0 w-0.5 bg-card/90"
             style={{ left: `${targetPercent}%` }}
           />
         )}

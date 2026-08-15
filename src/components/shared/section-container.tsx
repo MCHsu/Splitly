@@ -26,7 +26,7 @@ export function SectionContainerItem({
   return (
     <div
       data-slot="section-container-item"
-      className={cn("px-4 py-4", className)}
+      className={cn("p-4", className)}
       {...props}
     />
   );

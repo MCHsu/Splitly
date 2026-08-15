@@ -11,6 +11,7 @@ import { EmailStep } from "@/components/auth/email-step";
 import { PasswordStep } from "@/components/auth/password-step";
 import { RegisterStep } from "@/components/auth/register-step";
 import { SectionContainer } from "@/components/shared/section-container";
+import { StatusMessage } from "@/components/shared/status-message";
 import {
   emailStepSchema,
   signInFormSchema,
@@ -128,7 +129,7 @@ export function AuthForm() {
     step === "email" ? "Enter your email to continue" : emailValue;
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-muted px-4">
       <div className="w-full max-w-md">
         <SectionContainer>
           <div className="mb-6 flex flex-col items-center justify-between">
@@ -143,22 +144,22 @@ export function AuthForm() {
           </div>
 
           <div className="mb-8 text-center">
-            <h1 className="mb-1 text-2xl font-semibold text-gray-900">
+            <h1 className="mb-1 text-2xl font-semibold text-foreground">
               {title}
             </h1>
-            <p className="text-sm text-gray-600">{subtitle}</p>
+            <p className="text-sm text-muted-foreground">{subtitle}</p>
           </div>
 
           {error && (
-            <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3">
-              <p className="text-sm text-red-600">{error}</p>
-            </div>
+            <StatusMessage tone="error" className="mb-4">
+              {error}
+            </StatusMessage>
           )}
 
           {successMessage && (
-            <div className="mb-4 rounded-md border border-green-200 bg-green-50 p-3">
-              <p className="text-sm text-green-600">{successMessage}</p>
-            </div>
+            <StatusMessage tone="success" className="mb-4">
+              {successMessage}
+            </StatusMessage>
           )}
 
           {step === "email" && (

@@ -30,7 +30,7 @@ export function UserAvatar({
     <div
       className={cn(
         size,
-        "shrink-0 overflow-hidden rounded-full border border-gray-300",
+        "shrink-0 overflow-hidden rounded-full border",
         className,
       )}
     >

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PlusCircle } from "lucide-react";
+import { Plus } from "lucide-react";
 import { redirect } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -24,19 +24,19 @@ export default async function GroupsPage() {
         action={{
           href: "/groups/new",
           label: "New Group",
-          icon: PlusCircle,
+          icon: Plus,
         }}
       />
 
       {groups.length === 0 ? (
         <SectionContainer>
           <div className="flex flex-col items-center justify-center gap-4 md:gap-5 lg:gap-6">
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               No groups yet. Create your first group to get started.
             </p>
             <Link href="/groups/new">
               <Button>
-                <PlusCircle />
+                <Plus />
                 New Group
               </Button>
             </Link>

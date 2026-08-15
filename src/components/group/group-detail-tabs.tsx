@@ -33,7 +33,7 @@ export function GroupDetailTabs({ groupId, className }: GroupDetailTabsProps) {
     <div className="w-full">
       <Tabs
         value={activeTab}
-        className={cn("border-b border-gray-200", className)}
+        className={cn("border-b", className)}
       >
         {/* 2. 加上 h-auto 和 flex-wrap，確保手機版畫面太小時標籤可以像原本一樣自然換行 */}
         <TabsList variant="line" className="gap-4 md:gap-6 lg:gap-8">

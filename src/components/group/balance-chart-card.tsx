@@ -29,11 +29,11 @@ const chartConfig = {
   },
   positive: {
     label: "Owed to you",
-    color: "var(--chart-1)",
+    color: "var(--color-success)",
   },
   negative: {
     label: "You owe",
-    color: "var(--destructive)",
+    color: "var(--color-destructive)",
   },
 } satisfies ChartConfig;
 

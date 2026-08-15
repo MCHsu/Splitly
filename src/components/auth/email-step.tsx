@@ -28,7 +28,8 @@ export function EmailStep({ methods, isChecking, onSubmit }: EmailStepProps) {
         <Button
           type="submit"
           disabled={isChecking}
-          className="h-11 w-full bg-blue-600 font-medium text-white hover:bg-blue-700"
+          size="lg"
+          className="w-full font-medium"
         >
           {isChecking && <Spinner />}
           CONTINUE

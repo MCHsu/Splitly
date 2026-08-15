@@ -27,7 +27,8 @@ export function PasswordStep({ methods, onSubmit }: PasswordStepProps) {
         <Button
           type="submit"
           disabled={methods.formState.isSubmitting}
-          className="h-11 w-full bg-blue-600 font-medium text-white hover:bg-blue-700"
+          size="lg"
+          className="w-full font-medium"
         >
           {methods.formState.isSubmitting && <Spinner />}
           SIGN IN

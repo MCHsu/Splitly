@@ -81,7 +81,7 @@ function FormLayoutHeader({
 
       {title && <h2 className="mb-2 text-3xl font-bold">{title}</h2>}
 
-      {description && <p className="mb-8 text-gray-600">{description}</p>}
+      {description && <p className="mb-8 text-muted-foreground">{description}</p>}
     </div>
   );
 }

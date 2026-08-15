@@ -15,9 +15,9 @@ export function LandingHeader() {
   };
 
   return (
-    <header className="border-b bg-white">
+    <header className="border-b bg-background">
       <div className="container mx-auto px-4">
-        <div className="flex h-15 items-center justify-between">
+        <div className="flex h-(--header-height) items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <Logo />
           </Link>
@@ -39,9 +39,7 @@ export function LandingHeader() {
                   <Button variant="ghost">Sign In</Button>
                 </Link>
                 <Link href="/auth">
-                  <Button className="bg-blue-600 hover:bg-blue-700">
-                    Get Started
-                  </Button>
+                  <Button>Get Started</Button>
                 </Link>
               </>
             )}

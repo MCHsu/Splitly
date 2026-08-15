@@ -24,7 +24,7 @@ export function BaseInput({
   ...props
 }: BaseInputProps) {
   return (
-    <InputGroup className="h-10 bg-white">
+    <InputGroup className="h-10 bg-card">
       <InputGroupInput className={cn(className)} {...props} />
 
       {prefix && (

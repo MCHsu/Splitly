@@ -44,7 +44,7 @@ function netPositionCopy(
   if (netCents > 0) {
     return {
       text: `You lent ${formatted}`,
-      className: "text-emerald-600",
+      className: "text-success",
     };
   }
 
