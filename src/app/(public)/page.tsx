@@ -11,13 +11,6 @@ export default function Landing() {
         {/* Hero Section */}
         <div className="container mx-auto px-4 py-20">
           <div className="mx-auto max-w-4xl text-center">
-            <div className="mb-8 flex justify-center">
-              <div className="flex items-center gap-0">
-                <div className="h-16 w-16 rounded-full bg-brand-soft opacity-80" />
-                <div className="-ml-6 h-16 w-16 rounded-full bg-brand-accent" />
-              </div>
-            </div>
-
             <h1 className="mb-6 text-5xl font-bold text-foreground md:text-6xl">
               Split Bills with Ease
             </h1>
@@ -65,8 +58,8 @@ export default function Landing() {
               </div>
 
               <div className="rounded-xl border bg-card p-6 shadow-sm">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-brand-accent/15">
-                  <Users className="h-6 w-6 text-brand-accent" />
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+                  <Users className="h-6 w-6" />
                 </div>
                 <h3 className="mb-2 text-xl font-semibold text-foreground">
                   Multiple Groups

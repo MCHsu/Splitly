@@ -1,4 +1,4 @@
-export function Logo() {
+export function LogoText() {
   return (
     <svg
       width="74"

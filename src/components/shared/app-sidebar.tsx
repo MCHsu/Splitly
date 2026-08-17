@@ -13,7 +13,7 @@ import {
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import { AvatarDropdown } from "@/components/shared/avatar-dropdown";
-import { Logo } from "@/components/shared/logo";
+import { LogoText } from "@/components/shared/logo-text";
 
 const items = [
   {
@@ -32,7 +32,7 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader className="pb4 px-4 pt-6">
-        <Logo />
+        <LogoText />
       </SidebarHeader>
       {/* Sidebar content */}
       <SidebarContent>

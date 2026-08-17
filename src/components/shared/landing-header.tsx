@@ -5,7 +5,7 @@ import { LogOut } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useSession } from "@/lib/auth-client";
-import { Logo } from "@/components/shared/logo";
+import { LogoText } from "@/components/shared/logo-text";
 
 export function LandingHeader() {
   const { data: session } = useSession();
@@ -19,7 +19,7 @@ export function LandingHeader() {
       <div className="container mx-auto px-4">
         <div className="flex h-(--header-height) items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <Logo />
+            <LogoText />
           </Link>
 
           <nav className="flex items-center gap-4">

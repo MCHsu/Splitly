@@ -5,9 +5,6 @@
   --color-background: oklch(1 0 0);
   --color-foreground: oklch(32.1% 0 0);
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-
   --color-sidebar-ring: oklch(0.705 0.015 286.067);
   --color-sidebar-border: oklch(0.92 0.004 286.32);
   --color-sidebar-accent-foreground: oklch(0.21 0.006 285.885);
@@ -37,8 +34,6 @@
   --color-warning-foreground: oklch(100% 0 0);
 
   --color-overlay: oklch(0% 0 0 / 45%);
-  --color-brand-accent: oklch(70.5% 0.213 47.604);
-  --color-brand-soft: oklch(70.7% 0.165 254.624);
 
   --color-category-food: oklch(66.6% 0.179 58.318);
   --color-category-groceries: oklch(62.7% 0.194 149.214);
