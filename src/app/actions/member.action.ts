@@ -35,9 +35,9 @@ async function requireActiveMembership(
 
 export async function joinGroup(
   inviteCode: string,
-  displayName: string,
+  memberId: string,
 ): Promise<ActionResult> {
-  const validation = joinGroupSchema.safeParse({ inviteCode, displayName });
+  const validation = joinGroupSchema.safeParse({ inviteCode, memberId });
 
   if (!validation.success) {
     return { success: false, error: "Invalid input" };
@@ -64,26 +64,39 @@ export async function joinGroup(
     });
 
     if (existing) {
+      if (existing.isActive) {
+        return { success: true, groupId: group.id };
+      }
+
       await prisma.groupMember.update({
         where: { id: existing.id },
         data: {
-          name: validation.data.displayName,
           isActive: true,
           updatedById: currentUserId,
         },
       });
-    } else {
-      await prisma.groupMember.create({
-        data: {
-          groupId: group.id,
-          userId: currentUserId,
-          name: validation.data.displayName,
-          role: "MEMBER",
-          isActive: true,
-          createdById: currentUserId,
-          updatedById: currentUserId,
-        },
-      });
+
+      revalidatePath(`/groups/${group.id}`);
+      revalidatePath("/groups");
+
+      return { success: true, groupId: group.id };
+    }
+
+    const claimed = await prisma.groupMember.updateMany({
+      where: {
+        id: validation.data.memberId,
+        groupId: group.id,
+        userId: null,
+        isActive: true,
+      },
+      data: {
+        userId: currentUserId,
+        updatedById: currentUserId,
+      },
+    });
+
+    if (claimed.count === 0) {
+      return { success: false, error: "This name is no longer available" };
     }
 
     revalidatePath(`/groups/${group.id}`);
@@ -114,8 +127,8 @@ export async function addVirtualMember(
 
   const membership = await requireActiveMembership(groupId, currentUserId);
 
-  if (!membership) {
-    return { success: false, error: "You are not an active member of this group" };
+  if (!membership || membership.role !== "OWNER") {
+    return { success: false, error: "Only the group owner can add members" };
   }
 
   try {
@@ -153,8 +166,8 @@ export async function deleteMember(
 
   const membership = await requireActiveMembership(groupId, currentUserId);
 
-  if (!membership) {
-    return { success: false, error: "You are not an active member of this group" };
+  if (!membership || membership.role !== "OWNER") {
+    return { success: false, error: "Only the group owner can delete members" };
   }
 
   const target = await prisma.groupMember.findFirst({
@@ -163,6 +176,10 @@ export async function deleteMember(
 
   if (!target) {
     return { success: false, error: "Member not found" };
+  }
+
+  if (target.role === "OWNER") {
+    return { success: false, error: "Cannot delete the group owner" };
   }
 
   const ledger = await getMemberLedger(memberId);

@@ -1,6 +1,7 @@
-import { notFound } from "next/navigation";
-import { getGroupByInviteCode } from "@/lib/queries/member.query";
-import { JoinGroupClient } from "@/components/group/join-group-client";
+import { notFound, redirect } from "next/navigation";
+
+import { JoinGroupClient } from "@/components/join/join-group-client";
+import { getJoinPageData } from "@/lib/queries/member.query";
 
 export default async function JoinPage({
   params,
@@ -8,11 +9,21 @@ export default async function JoinPage({
   params: Promise<{ inviteCode: string }>;
 }) {
   const { inviteCode } = await params;
-  const group = await getGroupByInviteCode(inviteCode);
+  const data = await getJoinPageData(inviteCode);
 
-  if (!group) {
+  if (!data) {
     notFound();
   }
 
-  return <JoinGroupClient inviteCode={inviteCode} groupName={group.name} />;
+  if (data.alreadyMember) {
+    redirect(`/groups/${data.group.id}`);
+  }
+
+  return (
+    <JoinGroupClient
+      inviteCode={inviteCode}
+      groupName={data.group.name}
+      unclaimedMembers={data.unclaimedMembers}
+    />
+  );
 }

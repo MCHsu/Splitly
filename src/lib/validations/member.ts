@@ -18,7 +18,7 @@ export type MemberFormData = z.infer<typeof memberFormSchema>;
 
 export const joinGroupSchema = z.object({
   inviteCode: z.string().min(1),
-  displayName: z.string().min(1, "Display name is required"),
+  memberId: z.string().min(1),
 });
 
 export type JoinGroupData = z.infer<typeof joinGroupSchema>;

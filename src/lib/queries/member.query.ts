@@ -17,6 +17,51 @@ export async function getGroupByInviteCode(inviteCode: string) {
   }
 }
 
+export async function getJoinPageData(inviteCode: string) {
+  try {
+    const group = await prisma.group.findUnique({
+      where: { inviteCode },
+      select: { id: true, name: true, inviteCode: true },
+    });
+
+    if (!group) {
+      return null;
+    }
+
+    const currentUserId = await getCurrentUserId();
+
+    if (currentUserId) {
+      const existingMembership = await prisma.groupMember.findFirst({
+        where: { groupId: group.id, userId: currentUserId, isActive: true },
+        select: { id: true },
+      });
+
+      if (existingMembership) {
+        return {
+          group,
+          unclaimedMembers: [] as { id: string; name: string }[],
+          alreadyMember: true as const,
+        };
+      }
+    }
+
+    const unclaimedMembers = await prisma.groupMember.findMany({
+      where: { groupId: group.id, userId: null, isActive: true },
+      select: { id: true, name: true },
+      orderBy: { name: "asc" },
+    });
+
+    return {
+      group,
+      unclaimedMembers,
+      alreadyMember: false as const,
+    };
+  } catch (error) {
+    handleError(error);
+    return null;
+  }
+}
+
 export async function getMemberManagementData(groupId: string) {
   const currentUserId = await getCurrentUserId();
 
