@@ -15,24 +15,23 @@ export function PasswordStep({ methods, onSubmit }: PasswordStepProps) {
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)}>
-        <div className="mb-2">
+        <div className="flex flex-col gap-8 lg:gap-10">
           <PasswordField
             name="password"
             label="Password"
             placeholder="Enter your password"
           />
-        </div>
-        <div className="mb-4 text-right"></div>
 
-        <Button
-          type="submit"
-          disabled={methods.formState.isSubmitting}
-          size="lg"
-          className="w-full font-medium"
-        >
-          {methods.formState.isSubmitting && <Spinner />}
-          SIGN IN
-        </Button>
+          <Button
+            type="submit"
+            disabled={methods.formState.isSubmitting}
+            size="lg"
+            className="w-full font-medium"
+          >
+            {methods.formState.isSubmitting && <Spinner />}
+            Sign in
+          </Button>
+        </div>
       </form>
     </FormProvider>
   );

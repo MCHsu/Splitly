@@ -16,34 +16,36 @@ export function RegisterStep({ methods, onSubmit }: RegisterStepProps) {
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)}>
-        <div className="mb-6 flex flex-col gap-4">
-          <InputField
-            name="name"
-            label="Name"
-            type="text"
-            placeholder="Your name"
-          />
-          <PasswordField
-            name="password"
-            label="Password"
-            placeholder="At least 8 characters"
-          />
-          <PasswordField
-            name="confirmPassword"
-            label="Confirm Password"
-            placeholder="Re-enter your password"
-          />
-        </div>
+        <div className="flex flex-col gap-8 lg:gap-10">
+          <div className="flex flex-col gap-4">
+            <InputField
+              name="name"
+              label="Name"
+              type="text"
+              placeholder="Your name"
+            />
+            <PasswordField
+              name="password"
+              label="Password"
+              placeholder="At least 8 characters"
+            />
+            <PasswordField
+              name="confirmPassword"
+              label="Confirm Password"
+              placeholder="Re-enter your password"
+            />
+          </div>
 
-        <Button
-          type="submit"
-          disabled={methods.formState.isSubmitting}
-          size="lg"
-          className="w-full font-medium"
-        >
-          {methods.formState.isSubmitting && <Spinner />}
-          CREATE ACCOUNT
-        </Button>
+          <Button
+            type="submit"
+            disabled={methods.formState.isSubmitting}
+            size="lg"
+            className="w-full font-medium"
+          >
+            {methods.formState.isSubmitting && <Spinner />}
+            Create account
+          </Button>
+        </div>
       </form>
     </FormProvider>
   );

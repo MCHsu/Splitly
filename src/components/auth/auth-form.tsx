@@ -5,7 +5,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 
-import { Logo } from "@/components/shared/logo";
+import { LogoIcon } from "@/components/shared/logo-icon";
 import { BackButton } from "@/components/auth/back-button";
 import { EmailStep } from "@/components/auth/email-step";
 import { PasswordStep } from "@/components/auth/password-step";
@@ -132,18 +132,18 @@ export function AuthForm() {
     <div className="flex min-h-screen items-center justify-center bg-muted px-4">
       <div className="w-full max-w-md">
         <SectionContainer>
-          <div className="mb-6 flex flex-col items-center justify-between">
+          <div className="mb-5 flex flex-col items-center justify-between">
             <div className="flex w-full justify-start">
               {/* {step !== "email" && <BackButton onClick={handleBack} />} */}
               <BackButton onClick={handleBack} />
             </div>
 
             <div className="shrink-0">
-              <Logo />
+              <LogoIcon />
             </div>
           </div>
 
-          <div className="mb-8 text-center">
+          <div className="mb-10 text-center">
             <h1 className="mb-1 text-2xl font-semibold text-foreground">
               {title}
             </h1>

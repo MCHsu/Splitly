@@ -16,24 +16,23 @@ export function EmailStep({ methods, isChecking, onSubmit }: EmailStepProps) {
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)}>
-        <div className="mb-6">
+        <div className="flex flex-col gap-8 lg:gap-10">
           <InputField
             name="email"
             label="Email address"
             type="email"
             placeholder="you@example.com"
           />
+          <Button
+            type="submit"
+            disabled={isChecking}
+            size="lg"
+            className="w-full font-medium"
+          >
+            {isChecking && <Spinner />}
+            Continue
+          </Button>
         </div>
-
-        <Button
-          type="submit"
-          disabled={isChecking}
-          size="lg"
-          className="w-full font-medium"
-        >
-          {isChecking && <Spinner />}
-          CONTINUE
-        </Button>
       </form>
     </FormProvider>
   );
