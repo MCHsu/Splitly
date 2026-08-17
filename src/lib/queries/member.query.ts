@@ -78,28 +78,37 @@ export async function getMemberManagementData(groupId: string) {
     return null;
   }
 
-  const members = await prisma.groupMember.findMany({
-    where: { groupId },
-    include: { user: true },
-    orderBy: [{ isActive: "desc" }, { name: "asc" }],
-  });
+  const [members, group] = await Promise.all([
+    prisma.groupMember.findMany({
+      where: { groupId },
+      include: { user: true },
+      orderBy: [{ isActive: "desc" }, { name: "asc" }],
+    }),
+    prisma.group.findUnique({
+      where: { id: groupId },
+      select: { inviteCode: true },
+    }),
+  ]);
+
+  if (!group) {
+    return null;
+  }
 
   const ledger = await getGroupLedger(groupId);
 
-  const balances = new Map<string, number>();
-  const expenseCounts = new Map<string, number>();
+  const hasFinancialRecords: Record<string, boolean> = {};
 
   for (const member of members) {
     const row = ledger.get(member.id);
-    balances.set(member.id, row?.balanceInCents ?? 0);
-    expenseCounts.set(member.id, row?.expenseRecordCount ?? 0);
+    hasFinancialRecords[member.id] =
+      (row?.expenseRecordCount ?? 0) > 0 || (row?.settlementCount ?? 0) > 0;
   }
 
   return {
     members,
-    balances: Object.fromEntries(balances),
-    expenseCounts: Object.fromEntries(expenseCounts),
+    hasFinancialRecords,
     callerMembership,
     currentUserId,
+    inviteCode: group.inviteCode,
   };
 }

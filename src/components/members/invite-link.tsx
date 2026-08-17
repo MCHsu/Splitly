@@ -1,14 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Link2, Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Link } from "lucide-react";
 
-interface InviteLinkButtonProps {
+import { ActionSection } from "@/components/shared/action-section";
+
+interface InviteLinkProps {
   inviteCode: string;
 }
 
-export function InviteLinkButton({ inviteCode }: InviteLinkButtonProps) {
+export function InviteLink({ inviteCode }: InviteLinkProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -24,9 +25,13 @@ export function InviteLinkButton({ inviteCode }: InviteLinkButtonProps) {
   };
 
   return (
-    <Button variant="outline" onClick={handleCopy}>
-      {copied ? <Check className="size-4" /> : <Link2 className="size-4" />}
-      {copied ? "Copied!" : "Invite"}
-    </Button>
+    <ActionSection
+      title="Group invite link"
+      description="Anyone with this link can join the group"
+      actionLabel={copied ? "Copied!" : "Copy"}
+      icon={<Link />}
+      onAction={handleCopy}
+      variant="default"
+    />
   );
 }

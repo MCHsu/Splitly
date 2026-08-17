@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 
+import { AddMember } from "@/components/members/add-member";
+import { InviteLink } from "@/components/members/invite-link";
+import { MemberList } from "@/components/members/member-list";
 import { getMemberManagementData } from "@/lib/queries/member.query";
-import { ManageMembersClient } from "@/components/group/manage-members-client";
 
 export default async function GroupMembersPage({
   params,
@@ -15,23 +17,35 @@ export default async function GroupMembersPage({
     notFound();
   }
 
+  const isOwner = data.callerMembership.role === "OWNER";
+  const memberCount = data.members.length;
+
   return (
-    <>
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold">Manage Members</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Add virtual members, delete, deactivate, or leave the group.
-        </p>
+    <div className="flex flex-col gap-4 md:gap-6 lg:gap-10">
+      <div className="w-full">
+        <p className="mb-3 text-sm text-muted-foreground">Invite</p>
+        <InviteLink inviteCode={data.inviteCode} />
       </div>
 
-      <ManageMembersClient
-        groupId={groupId}
-        members={data.members}
-        balances={data.balances}
-        expenseCounts={data.expenseCounts}
-        callerMembership={data.callerMembership}
-        currentUserId={data.currentUserId}
-      />
-    </>
+      {isOwner && (
+        <div className="w-full">
+          <p className="mb-3 text-sm text-muted-foreground">Add member</p>
+          <AddMember groupId={groupId} />
+        </div>
+      )}
+
+      <div className="w-full">
+        <p className="mb-3 text-sm text-muted-foreground">
+          {memberCount} {memberCount === 1 ? "member" : "members"}
+        </p>
+        <MemberList
+          groupId={groupId}
+          members={data.members}
+          hasFinancialRecords={data.hasFinancialRecords}
+          callerMembership={data.callerMembership}
+          currentUserId={data.currentUserId}
+        />
+      </div>
+    </div>
   );
 }

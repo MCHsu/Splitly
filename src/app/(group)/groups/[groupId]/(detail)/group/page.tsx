@@ -2,10 +2,10 @@ import { notFound } from "next/navigation";
 import { Trash2, DoorOpen } from "lucide-react";
 
 import { updateGroup } from "@/app/actions/group.action";
+import { getCurrentUserId } from "@/lib/queries/auth.query";
 import { getGroupById } from "@/lib/queries/group.query";
 import { GroupForm } from "@/components/group/group-form";
 import { ActionSection } from "@/components/shared/action-section";
-import { InviteLinkButton } from "@/components/group/invite-link-button";
 import type { GroupFormData } from "@/lib/validations/group";
 
 export default async function GroupSettingsPage({
@@ -20,47 +20,45 @@ export default async function GroupSettingsPage({
     notFound();
   }
 
+  const currentUserId = await getCurrentUserId();
+  const callerMembership = group.members.find(
+    (member) => member.userId === currentUserId && member.isActive,
+  );
+  const isOwner = callerMembership?.role === "OWNER";
+
   async function handleUpdate(data: GroupFormData) {
     "use server";
     await updateGroup(groupId, data);
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <h2 className="text-xl font-semibold">Group</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Edit group details and share an invite link.
-          </p>
-        </div>
-        <InviteLinkButton inviteCode={group.inviteCode} />
-      </div>
+    <div className="flex flex-col gap-4 md:gap-6 lg:gap-10">
+      <div className="w-full">
+        <p className="mb-3 text-sm text-muted-foreground">Group details</p>
 
-      <GroupForm
-        mode="edit"
-        defaultValues={{
-          name: group.name,
-          description: group.description ?? "",
-          currency: group.currency,
-        }}
-        onSubmit={handleUpdate}
-      />
-
-      <div className="flex flex-col gap-4">
-        <ActionSection
-          title="Delete group"
-          description="Permanently deletes this group for everyone, including all expenses, members and settlement history. This can't be undone."
-          actionLabel="Delete"
-          icon={<Trash2 className="text-destructive" />}
+        <GroupForm
+          mode="edit"
+          defaultValues={{
+            name: group.name,
+            description: group.description ?? "",
+            currency: group.currency,
+          }}
+          onSubmit={handleUpdate}
         />
-        {/* <ActionSection
-          title="Leave group"
-          description="You'll lose access unless someone invites you back. Your past expenses stay in the group's history."
-          actionLabel="Leave"
-          icon={<DoorOpen className="text-destructive" />}
-        /> */}
       </div>
+
+      {isOwner && (
+        <div className="w-full">
+          <p className="mb-3 text-sm text-muted-foreground">Danger zone</p>
+          <ActionSection
+            title="Delete group"
+            description="Permanently deletes this group for everyone, including all expenses and members. This can't be undone."
+            actionLabel="Delete"
+            icon={<Trash2 className="text-destructive" />}
+            variant="destructive"
+          />
+        </div>
+      )}
     </div>
   );
 }

@@ -32,9 +32,7 @@ export function MembersProvider({ children, members }: MembersProviderProps) {
     };
   }, [members, user]);
 
-  return (
-    <MembersContext value={membersContextData}>{children}</MembersContext>
-  );
+  return <MembersContext value={membersContextData}>{children}</MembersContext>;
 }
 
 export function useMembers() {
