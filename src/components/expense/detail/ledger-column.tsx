@@ -32,7 +32,7 @@ export function LedgerColumn({
         {entries.map((entry) => (
           <li key={entry.memberId} className="flex items-center gap-3 text-sm">
             <div className="flex items-center gap-3">
-              <UserAvatar name={entry.name} size="w-10 h-10" />
+              <UserAvatar name={entry.name} size="md" />
               <span className="text-base font-medium">{entry.name}</span>
             </div>
 

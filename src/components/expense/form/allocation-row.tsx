@@ -36,7 +36,7 @@ export function AllocationRow({
     <div className="flex items-center gap-4">
       <Checkbox
         checked={isSelected}
-        className="data-[state=checked]:border-primary data-[state=checked]:bg-primary"
+        className="bg-background data-[state=checked]:border-primary data-[state=checked]:bg-primary"
         onCheckedChange={(checked) => onToggle(checked === true)}
       />
 

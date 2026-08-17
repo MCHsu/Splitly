@@ -4,7 +4,10 @@ import { cn } from "@/lib/utils";
 
 interface SectionContainerProps extends ComponentProps<"div"> {}
 
-export function SectionContainer({ className, ...props }: SectionContainerProps) {
+export function SectionContainer({
+  className,
+  ...props
+}: SectionContainerProps) {
   return (
     <div
       data-slot="section-container"
@@ -26,7 +29,9 @@ export function SectionContainerItem({
   return (
     <div
       data-slot="section-container-item"
-      className={cn("p-4", className)}
+      // className={cn("p-4", className)}
+      // className={cn("px-4 py-4 md:px-6 lg:px-10", className)}
+      className={cn("py-4", className)}
       {...props}
     />
   );

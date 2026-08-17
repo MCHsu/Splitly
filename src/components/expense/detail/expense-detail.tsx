@@ -114,7 +114,7 @@ export function ExpenseDetail({
             </time>
           </div>
 
-          <p className="font-mono text-4xl tracking-tight tabular-nums md:text-5xl">
+          <p className="text-4xl tracking-tight tabular-nums md:text-5xl">
             {formatMoneyFromCents(expense.amountInCents, {
               currencyCode: currency,
             })}
@@ -144,7 +144,7 @@ export function ExpenseDetail({
             <div className="-mx-4 border-t md:-mx-6 lg:-mx-10" />
             <p
               className={cn(
-                "font-mono text-base font-medium tabular-nums md:text-lg",
+                "text-base font-medium tabular-nums md:text-lg",
                 position.className,
               )}
             >

@@ -13,7 +13,8 @@ const BEAM_COLORS = ["#0db2ac", "#f5dd7e", "#fc8d4d", "#fc694d", "#faba32"];
 // Map the size classNames used across call sites to the pixel size
 // boring-avatars expects.
 const SIZE_PX_MAP: Record<string, number> = {
-  "w-10 h-10": 40,
+  lg: 40,
+  md: 32,
   sm: 24,
 };
 

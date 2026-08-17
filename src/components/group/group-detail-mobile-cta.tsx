@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Receipt } from "lucide-react";
+import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -9,11 +9,11 @@ interface GroupDetailMobileCtaProps {
 
 export function GroupDetailMobileCta({ groupId }: GroupDetailMobileCtaProps) {
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 p-4 md:hidden">
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 border-t bg-background p-4 md:hidden">
       <div className="pointer-events-auto mx-auto flex max-w-lg justify-center">
         <Button asChild size="lg" className="shadow-lg">
           <Link href={`/groups/${groupId}/expenses/new`}>
-            <Receipt />
+            <Plus />
             New Expense
           </Link>
         </Button>

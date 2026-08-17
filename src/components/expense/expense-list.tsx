@@ -66,10 +66,10 @@ export function ExpenseList({
         {expenses.length} {expenses.length === 1 ? "expense" : "expenses"}
       </p>
 
-      <SectionContainer className="divide-y">
+      <SectionContainer>
         {Object.entries(groupedExpenses).map(([dayLabel, items]) => (
           <div key={dayLabel}>
-            <div className="bg-muted/40 px-4 py-2">
+            <div className="rounded-md bg-muted px-4 py-2">
               <h3 className="text-xs font-medium text-muted-foreground">
                 {dayLabel}
               </h3>
@@ -140,19 +140,19 @@ export function ExpenseList({
                           {formatMoneyFromCents(paidTotal, {
                             currencyCode: currency,
                           })}
-                          {myShare != null && (
+                          {/* {myShare != null && (
                             <>
                               {" · "}Your share{" "}
                               {formatMoneyFromCents(myShare, {
                                 currencyCode: currency,
                               })}
                             </>
-                          )}
+                          )} */}
                         </p>
                       </div>
 
                       {myShare != null && (
-                        <div className="shrink-0 text-base font-bold">
+                        <div className="shrink-0 text-lg font-bold sm:text-xl">
                           {formatMoneyFromCents(myShare, {
                             currencyCode: currency,
                           })}

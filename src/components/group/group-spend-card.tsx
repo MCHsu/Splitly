@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SectionContainer } from "@/components/shared/section-container";
 import { Separator } from "@/components/ui/separator";
 import { formatMoneyFromCents } from "@/lib/money";
 import { cn } from "@/lib/utils";
@@ -17,7 +18,7 @@ export function GroupSpendCard({
   className,
 }: GroupSpendCardProps) {
   return (
-    <Card className={cn("overflow-hidden", className)}>
+    <SectionContainer>
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">
           Total Group Spend
@@ -35,6 +36,6 @@ export function GroupSpendCard({
           </span>
         </div>
       </CardContent>
-    </Card>
+    </SectionContainer>
   );
 }
