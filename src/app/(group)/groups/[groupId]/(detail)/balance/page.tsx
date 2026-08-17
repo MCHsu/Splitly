@@ -4,12 +4,11 @@ import { getGroupById } from "@/lib/queries/group.query";
 import {
   BalanceChartCard,
   type BalanceChartDatum,
-} from "@/components/group/balance-chart-card";
+} from "@/components/balance/balance-chart-card";
 import {
   SuggestedTransfersCard,
   type SuggestedTransfer,
-} from "@/components/group/suggested-transfers-card";
-import { SectionContainer } from "@/components/shared/section-container";
+} from "@/components/balance/suggested-transfers-card";
 import { getGroupLedger } from "@/lib/ledger";
 import { getMemberDisplayName } from "@/lib/member";
 import { computeMinTransfers } from "@/lib/settlement";
@@ -55,14 +54,9 @@ export default async function GroupBalancePage({
   );
 
   return (
-    <SectionContainer>
-      <div className="flex flex-col gap-4 md:gap-6">
-        <BalanceChartCard data={chartData} currency={group.currency} />
-        <SuggestedTransfersCard
-          transfers={transfers}
-          currency={group.currency}
-        />
-      </div>
-    </SectionContainer>
+    <div className="flex flex-col gap-4 md:gap-6 lg:gap-10">
+      <BalanceChartCard data={chartData} currency={group.currency} />
+      <SuggestedTransfersCard transfers={transfers} currency={group.currency} />
+    </div>
   );
 }
