@@ -4,6 +4,7 @@ import { useFormContext, useWatch } from "react-hook-form";
 
 import { TabbedFieldGroup } from "@/components/shared/form/tabbed-field-group";
 import { AllocationEditor } from "@/components/expense/form/allocation-editor";
+import { Label } from "@/components/ui/label";
 import type { ExpenseFormData } from "@/lib/validations/expense";
 
 const splitMethods: {
@@ -35,20 +36,14 @@ export function SplitMethodSection({
   };
 
   return (
-    <TabbedFieldGroup
-      label="Split Method"
-      value={mode}
-      options={splitMethods}
-      onValueChange={handleModeChange}
-    >
-      {() => (
-        <AllocationEditor
-          name={name}
-          total={total}
-          label="Total split"
-          currency={currency}
-        />
-      )}
-    </TabbedFieldGroup>
+    <div className="flex flex-col gap-3">
+      <Label className="text-sm font-medium">Split Method</Label>
+      <AllocationEditor
+        name={name}
+        total={total}
+        label="Total split"
+        currency={currency}
+      />
+    </div>
   );
 }

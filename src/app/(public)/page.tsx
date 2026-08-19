@@ -1,9 +1,19 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { redirect } from "next/navigation";
 import { ArrowRight, Receipt, Users, PieChart, Sparkles } from "lucide-react";
-import { LandingHeader } from "@/components/shared/landing-header";
 
-export default function Landing() {
+import { Button } from "@/components/ui/button";
+import { LandingHeader } from "@/components/shared/landing-header";
+import { getAuthSession } from "@/lib/queries/auth.query";
+
+const HIDE_LANDING: boolean = true;
+
+export default async function Landing() {
+  if (HIDE_LANDING) {
+    const session = await getAuthSession();
+    redirect(session?.user ? "/groups" : "/auth");
+  }
+
   return (
     <>
       <LandingHeader />
