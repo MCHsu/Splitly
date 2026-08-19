@@ -2,7 +2,6 @@ import { SectionContainer } from "@/components/shared/section-container";
 import { UserAvatar } from "@/components/shared/user-avatar";
 import { formatMoneyFromCents } from "@/lib/money";
 import { ArrowBigDownDash, ArrowBigRightDash } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 export type SuggestedTransfer = {
   fromMemberId: string;
@@ -33,7 +32,7 @@ export function SuggestedTransfersCard({
 
       <SectionContainer>
         {count === 0 ? (
-          <p className="text-sm text-muted-foreground">All settled</p>
+          <p className="text-muted-foreground">No suggested transfers.</p>
         ) : (
           <ul className="flex flex-col gap-4 divide-y">
             {transfers.map((transfer) => (

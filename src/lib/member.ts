@@ -25,7 +25,7 @@ export const MEMBER_KIND_LABEL: Record<MemberKind, string> = {
 };
 
 export const MEMBER_KIND_ICON: Partial<Record<MemberKind, LucideIcon>> = {
-  owner: ShieldCheck,
+  owner: BadgeCheck,
   linked: BadgeCheck,
   anonymous: BadgeQuestionMark,
 };

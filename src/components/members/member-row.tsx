@@ -55,28 +55,32 @@ export function MemberRow({
             <span className="truncate">
               {displayName}
               {isSelf && (
-                <span className="ml-1.5 text-xs font-normal text-primary">
-                  (You)
-                </span>
+                <span className="ml-1.5 text-xs text-primary">(You)</span>
               )}
             </span>
             {KindIcon && (
-              <KindIcon
-                className={cn(
-                  "size-4 shrink-0",
-                  kind === "owner" ? "text-primary" : "text-muted-foreground",
-                )}
-              />
+              <KindIcon className="size-4 shrink-0 text-muted-foreground" />
             )}
           </p>
-          {kind === "owner" ? (
-            <span className="mt-0.5 inline-flex rounded-md bg-primary/10 px-1.5 py-0.5 text-xs font-medium text-primary">
+          {kind === "owner" && (
+            <span className="mt-0.5 inline-flex rounded-lg bg-primary/10 px-1.5 py-0.5 text-xs font-medium text-primary">
               {MEMBER_KIND_LABEL.owner}
             </span>
-          ) : (
-            <p className="text-xs text-muted-foreground">
-              {MEMBER_KIND_LABEL[kind]}
-            </p>
+          )}
+          {kind === "linked" && (
+            <span className="mt-0.5 inline-flex rounded-lg bg-success/10 px-1.5 py-0.5 text-xs font-medium text-success">
+              {MEMBER_KIND_LABEL.linked}
+            </span>
+          )}
+          {kind === "anonymous" && (
+            <span className="mt-0.5 inline-flex rounded-lg bg-muted-foreground/10 px-1.5 py-0.5 text-xs font-medium text-muted-foreground">
+              {MEMBER_KIND_LABEL.anonymous}
+            </span>
+          )}
+          {kind === "unclaimed" && (
+            <span className="text-xs font-medium text-muted-foreground">
+              {MEMBER_KIND_LABEL.unclaimed}
+            </span>
           )}
         </div>
       </div>

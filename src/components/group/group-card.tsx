@@ -16,7 +16,7 @@ export function GroupCard({
 }: GroupCardProps) {
   return (
     <Link href={`/groups/${id}`}>
-      <div className="flex cursor-pointer items-center justify-between rounded-lg border bg-card p-6 transition-shadow hover:bg-muted">
+      <div className="flex cursor-pointer items-center justify-between rounded-2xl border bg-card p-6 transition-shadow hover:bg-muted sm:rounded-3xl">
         <div>
           <h2 className="mb-2 text-xl font-semibold">{name}</h2>
           <div className="space-y-1 text-sm text-muted-foreground">

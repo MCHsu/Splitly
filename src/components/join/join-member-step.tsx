@@ -25,13 +25,13 @@ export function JoinMemberStep({
   onSubmit,
   isSubmitting,
 }: JoinMemberStepProps) {
-  if (members.length === 0) {
-    return (
-      <p className="text-center text-sm text-muted-foreground">
-        No open names. Ask the owner to add you, then come back.
-      </p>
-    );
-  }
+  // if (members.length === 0) {
+  //   return (
+  //     <p className="text-center text-sm text-muted-foreground">
+  //       No open names. Ask the owner to add you, then come back.
+  //     </p>
+  //   );
+  // }
 
   const selectedName = members.find((m) => m.id === selectedMemberId)?.name;
 
@@ -55,7 +55,7 @@ export function JoinMemberStep({
               disabled={isSubmitting}
               className={cn(
                 "flex w-full items-center gap-3 rounded-xl border bg-background px-4 py-3 text-left transition-all",
-                "hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+                "hover:bg-accent/50 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none",
                 selected && "border-primary ring-2 ring-primary",
               )}
             >

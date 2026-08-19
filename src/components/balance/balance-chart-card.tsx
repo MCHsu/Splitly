@@ -39,9 +39,7 @@ export function BalanceChartCard({
 
       <SectionContainer>
         {allSettled ? (
-          <p className="text-sm text-muted-foreground">
-            Everyone is settled up.
-          </p>
+          <p className="text-muted-foreground">No member balances.</p>
         ) : (
           <ul className="relative flex flex-col gap-1.5">
             <span

@@ -11,7 +11,7 @@ export function GroupDetailMobileCta({ groupId }: GroupDetailMobileCtaProps) {
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 border-t bg-background p-4 md:hidden">
       <div className="pointer-events-auto mx-auto flex max-w-lg justify-center">
-        <Button asChild size="lg" className="shadow-lg">
+        <Button asChild className="shadow-lg">
           <Link href={`/groups/${groupId}/expenses/new`}>
             <Plus />
             New Expense

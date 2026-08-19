@@ -58,11 +58,10 @@ export function MemberList({
     <div className="space-y-4">
       {error && <StatusMessage tone="error">{error}</StatusMessage>}
 
-      <SectionContainer className="divide-y p-0">
+      <SectionContainer className="divide-y">
         {sorted.map((member) => {
           const isSelf = member.userId === currentUserId;
-          const canDelete =
-            isOwner && member.role !== "OWNER" && !isSelf;
+          const canDelete = isOwner && member.role !== "OWNER" && !isSelf;
 
           return (
             <MemberRow

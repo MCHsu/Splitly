@@ -23,7 +23,18 @@ interface JoinGroupFormProps {
   isSignedIn: boolean;
 }
 
-function getJoinHeading(step: JoinStep, groupName: string): StepHeading | null {
+function getJoinHeading(
+  step: JoinStep,
+  groupName: string,
+  hasUnclaimedMembers: boolean,
+): StepHeading | null {
+  if (!hasUnclaimedMembers) {
+    return {
+      title: "No open names",
+      subtitle: "Ask the owner to add you, then come back",
+    };
+  }
+
   if (step === "identity") {
     return {
       title: `Join ${groupName}`,
@@ -114,7 +125,40 @@ export function JoinGroupForm({
     setStep("identity");
   };
 
-  const heading = getJoinHeading(step, groupName) ?? auth.heading;
+  const hasUnclaimedMembers = unclaimedMembers.length > 0;
+  const heading =
+    getJoinHeading(step, groupName, hasUnclaimedMembers) ?? auth.heading;
+
+  const renderStep = () => {
+    if (!hasUnclaimedMembers) {
+      return null;
+    }
+
+    switch (step) {
+      case "identity":
+        return (
+          <JoinIdentityStep
+            onContinueWithEmail={handleContinueWithEmail}
+            onContinueAsGuest={handleContinueAsGuest}
+            isGuestLoading={isGuestLoading}
+          />
+        );
+      case "auth":
+        return <EmailAuthSteps auth={auth} />;
+      case "claim":
+        return (
+          <JoinMemberStep
+            members={unclaimedMembers}
+            selectedMemberId={selectedMemberId}
+            onSelect={setSelectedMemberId}
+            onSubmit={handleClaim}
+            isSubmitting={isJoining}
+          />
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <AuthCard
@@ -123,25 +167,7 @@ export function JoinGroupForm({
       error={error}
       onBack={step === "auth" ? handleBack : undefined}
     >
-      {step === "identity" && (
-        <JoinIdentityStep
-          onContinueWithEmail={handleContinueWithEmail}
-          onContinueAsGuest={handleContinueAsGuest}
-          isGuestLoading={isGuestLoading}
-        />
-      )}
-
-      {step === "auth" && <EmailAuthSteps auth={auth} />}
-
-      {step === "claim" && (
-        <JoinMemberStep
-          members={unclaimedMembers}
-          selectedMemberId={selectedMemberId}
-          onSelect={setSelectedMemberId}
-          onSubmit={handleClaim}
-          isSubmitting={isJoining}
-        />
-      )}
+      {renderStep()}
     </AuthCard>
   );
 }
