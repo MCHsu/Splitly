@@ -14,7 +14,7 @@ export function BackButton({ onClick }: BackButtonProps) {
       variant="ghost"
       size="sm"
       onClick={onClick}
-      className="mb-4 text-muted-foreground hover:text-foreground"
+      className="text-muted-foreground hover:text-foreground"
     >
       <ArrowLeft />
       Back
