@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 
-import { JoinGroupClient } from "@/components/join/join-group-client";
+import { JoinGroupForm } from "@/components/join/join-group-form";
 import { getJoinPageData } from "@/lib/queries/member.query";
 
 export default async function JoinPage({
@@ -20,10 +20,11 @@ export default async function JoinPage({
   }
 
   return (
-    <JoinGroupClient
+    <JoinGroupForm
       inviteCode={inviteCode}
       groupName={data.group.name}
       unclaimedMembers={data.unclaimedMembers}
+      isSignedIn={data.isSignedIn}
     />
   );
 }

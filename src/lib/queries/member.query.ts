@@ -41,6 +41,7 @@ export async function getJoinPageData(inviteCode: string) {
           group,
           unclaimedMembers: [] as { id: string; name: string }[],
           alreadyMember: true as const,
+          isSignedIn: true as const,
         };
       }
     }
@@ -55,6 +56,7 @@ export async function getJoinPageData(inviteCode: string) {
       group,
       unclaimedMembers,
       alreadyMember: false as const,
+      isSignedIn: Boolean(currentUserId),
     };
   } catch (error) {
     handleError(error);
