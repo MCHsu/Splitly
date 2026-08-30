@@ -1,6 +1,5 @@
-import { format } from "date-fns";
-
 import { SectionContainer } from "@/components/shared/section-container";
+import { formatDate } from "@/lib/date";
 import {
   LedgerColumn,
   type LedgerEntry,
@@ -27,31 +26,7 @@ function toLedgerEntries(
     memberId: row.member.id,
     name: row.member.name,
     amountInCents: row.amountInCents,
-    isInactive: !row.member.isActive,
   }));
-}
-
-function netPositionCopy(
-  netCents: number,
-  currency: string,
-): { text: string; className: string } | null {
-  if (netCents === 0) return null;
-
-  const formatted = formatMoneyFromCents(Math.abs(netCents), {
-    currencyCode: currency,
-  });
-
-  if (netCents > 0) {
-    return {
-      text: `You lent ${formatted}`,
-      className: "text-success",
-    };
-  }
-
-  return {
-    text: `You owe ${formatted}`,
-    className: "text-destructive",
-  };
 }
 
 export function ExpenseDetail({
@@ -67,104 +42,80 @@ export function ExpenseDetail({
   const paidEntries = toLedgerEntries(expense.payments);
   const splitEntries = toLedgerEntries(expense.shares);
 
-  const myPaid =
-    currentUserId == null
-      ? 0
-      : expense.payments
-          .filter((p) => p.member.userId === currentUserId)
-          .reduce((sum, p) => sum + p.amountInCents, 0);
-  const myShare =
-    currentUserId == null
-      ? 0
-      : expense.shares
-          .filter((s) => s.member.userId === currentUserId)
-          .reduce((sum, s) => sum + s.amountInCents, 0);
-  const net = myPaid - myShare;
-  const position =
-    currentUserId != null ? netPositionCopy(net, currency) : null;
-
   return (
-    <SectionContainer>
-      <div className="flex flex-col gap-6">
-        <header className="flex flex-col gap-4">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex min-w-0 items-center gap-3">
+    <div className="flex flex-col justify-between gap-4 md:gap-6">
+      <SectionContainer>
+        <div className="flex flex-col gap-6 sm:gap-8 lg:gap-10">
+          <header className="flex flex-col gap-4">
+            <div className="flex items-center gap-3 md:gap-4">
               <div
                 className={cn(
-                  "flex size-11 shrink-0 items-center justify-center rounded-md",
+                  "flex size-8 shrink-0 items-center justify-center rounded-lg sm:size-10 sm:rounded-xl",
                   category.color.bg,
                 )}
               >
-                <CategoryIcon className={cn("size-5", category.color.icon)} />
+                <CategoryIcon className={cn("size-4", category.color.icon)} />
               </div>
-              <div className="min-w-0">
-                <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                  {category.label}
-                </p>
-                <h1 className="truncate text-xl font-semibold tracking-tight md:text-2xl">
-                  {expense.description}
-                </h1>
-              </div>
+              <time
+                dateTime={formatDate(expense.date)}
+                className="shrink-0 text-sm font-medium text-muted-foreground"
+              >
+                {formatDate(expense.date)}
+              </time>
             </div>
-            <time
-              dateTime={expense.date.toISOString()}
-              className="shrink-0 text-sm text-muted-foreground"
-            >
-              {format(expense.date, "d MMMM yyyy")}
-            </time>
+
+            <div className="flex flex-row flex-wrap items-center justify-between gap-6 sm:gap-8 md:flex-nowrap lg:gap-10">
+              <h1 className="text-xl font-bold first-letter:uppercase sm:text-2xl md:text-3xl">
+                {expense.description}
+              </h1>
+
+              <p className="text-xl font-semibold tabular-nums sm:text-2xl md:text-3xl">
+                {formatMoneyFromCents(expense.amountInCents, {
+                  currencyCode: currency,
+                })}
+              </p>
+            </div>
+          </header>
+
+          <div className="-mx-4 border-t md:-mx-6 lg:-mx-10" />
+
+          <div className="grid gap-6 lg:grid-cols-2 lg:gap-0">
+            <LedgerColumn
+              title="Paid by"
+              entries={paidEntries}
+              currency={currency}
+              className="md:pr-6 lg:pr-10"
+            />
+            <div className="-mx-4 border-t lg:mx-0 lg:hidden" />
+            <LedgerColumn
+              title="Split between"
+              entries={splitEntries}
+              currency={currency}
+              className="lg:border-l lg:pl-10"
+            />
           </div>
 
-          <p className="text-4xl tracking-tight tabular-nums md:text-5xl">
-            {formatMoneyFromCents(expense.amountInCents, {
-              currencyCode: currency,
-            })}
-          </p>
-        </header>
+          {expense.note ? (
+            <>
+              <div className="-mx-4 border-t md:-mx-6 lg:-mx-10" />
 
-        <div className="-mx-4 border-t md:-mx-6 lg:-mx-10" />
-
-        <div className="grid gap-6 lg:grid-cols-2 lg:gap-0">
-          <LedgerColumn
-            title="Paid by"
-            entries={paidEntries}
-            currency={currency}
-            className="md:pr-6 lg:pr-10"
-          />
-          <div className="-mx-4 border-t lg:mx-0 lg:hidden" />
-          <LedgerColumn
-            title="Split between"
-            entries={splitEntries}
-            currency={currency}
-            className="lg:border-l lg:pl-10"
-          />
+              <footer className="text-sm text-muted-foreground">
+                <p>
+                  <span className="font-medium uppercase">Note:</span>{" "}
+                  {expense.note}
+                </p>
+              </footer>
+            </>
+          ) : null}
         </div>
+      </SectionContainer>
 
-        {position ? (
-          <>
-            <div className="-mx-4 border-t md:-mx-6 lg:-mx-10" />
-            <p
-              className={cn(
-                "text-base font-medium tabular-nums md:text-lg",
-                position.className,
-              )}
-            >
-              {position.text}
-            </p>
-          </>
+      <p className="px-2 text-xs text-muted-foreground md:px-3">
+        Added: {formatDate(expense.createdAt)}
+        {expense.updatedAt.getTime() !== expense.createdAt.getTime() ? (
+          <> · Updated: {formatDate(expense.updatedAt)}</>
         ) : null}
-
-        <div className="-mx-4 border-t md:-mx-6 lg:-mx-10" />
-
-        <footer className="space-y-2 text-sm text-muted-foreground">
-          {expense.note ? <p>{expense.note}</p> : null}
-          <p>
-            Added {format(expense.createdAt, "d MMM yyyy")}
-            {expense.updatedAt.getTime() !== expense.createdAt.getTime() ? (
-              <> · Updated {format(expense.updatedAt, "d MMM yyyy")}</>
-            ) : null}
-          </p>
-        </footer>
-      </div>
-    </SectionContainer>
+      </p>
+    </div>
   );
 }

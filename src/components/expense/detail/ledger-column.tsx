@@ -6,7 +6,6 @@ export type LedgerEntry = {
   memberId: string;
   name: string;
   amountInCents: number;
-  isInactive?: boolean;
 };
 
 interface LedgerColumnProps {
@@ -23,24 +22,21 @@ export function LedgerColumn({
   className,
 }: LedgerColumnProps) {
   return (
-    <div className={cn("flex min-w-0 flex-col gap-3", className)}>
-      <h3 className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+    <div className={cn("flex min-w-0 flex-col gap-5", className)}>
+      <h3 className="text-xs font-medium text-muted-foreground uppercase">
         {title}
       </h3>
 
       <ul className="flex flex-col gap-6">
         {entries.map((entry) => (
-          <li key={entry.memberId} className="flex items-center gap-3 text-sm">
-            <div className="flex items-center gap-3">
-              <UserAvatar name={entry.name} size="md" />
-              <span className="text-base font-medium">{entry.name}</span>
-            </div>
+          <li key={entry.memberId} className="flex items-center gap-3">
+            <UserAvatar name={entry.name} size="md" showName />
 
             <span
               aria-hidden
               className="min-w-2 flex-1 border-b border-dotted border-muted-foreground/40"
             />
-            <span className="text-lg font-bold tabular-nums">
+            <span className="text-base font-semibold tabular-nums md:text-lg">
               {formatMoneyFromCents(entry.amountInCents, {
                 currencyCode: currency,
               })}

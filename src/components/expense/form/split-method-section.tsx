@@ -37,7 +37,7 @@ export function SplitMethodSection({
 
   return (
     <div className="flex flex-col gap-3">
-      <Label className="text-sm font-medium">Split Method</Label>
+      <Label className="text-sm font-medium">Split Between</Label>
       <AllocationEditor
         name={name}
         total={total}

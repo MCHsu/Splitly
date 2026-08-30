@@ -41,12 +41,7 @@ export function AllocationRow({
       />
 
       <div className="flex w-50 items-center gap-3">
-        <div className="flex flex-row items-center gap-2">
-          <UserAvatar name={displayName} size="sm" />
-          <span className="text-sm font-semibold text-foreground">
-            {displayName}
-          </span>
-        </div>
+        <UserAvatar name={displayName} size="md" showName />
       </div>
 
       <AmountField

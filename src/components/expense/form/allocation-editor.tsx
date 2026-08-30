@@ -27,7 +27,7 @@ export function AllocationEditor({
   );
 
   return (
-    <div className="w-full space-y-6 rounded-lg border bg-muted p-4 md:p-6 lg:p-10">
+    <div className="w-full space-y-6 rounded-xl border bg-muted p-4 md:p-6 lg:p-10">
       {rows.map((row, index) => {
         const memberData = activeMembers.find(
           (member) => member.id === row.memberId,
