@@ -9,7 +9,7 @@ import {
   SuggestedTransfersCard,
   type SuggestedTransfer,
 } from "@/components/balance/suggested-transfers-card";
-import { getGroupLedger } from "@/lib/ledger";
+import { getGroupLedger } from "@/lib/queries/ledger.query";
 import { getMemberDisplayName } from "@/lib/member";
 import { computeMinTransfers } from "@/lib/settlement";
 
@@ -54,7 +54,7 @@ export default async function GroupBalancePage({
   );
 
   return (
-    <div className="flex flex-col gap-4 md:gap-6 lg:gap-10">
+    <div className="flex flex-col gap-6 lg:gap-10">
       <BalanceChartCard data={chartData} currency={group.currency} />
       <SuggestedTransfersCard transfers={transfers} currency={group.currency} />
     </div>

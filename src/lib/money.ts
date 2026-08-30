@@ -14,10 +14,16 @@ export const toCents = (value: number | string | null | undefined) =>
 
 export const fromCents = (cents: number) => cents / 100;
 
-/** 「10.999」這種輸入會被靜默進位，所以在驗證階段就擋掉。 */
 export const isTwoDecimalPlaces = (value: number | string) => {
   const n = Number(value);
-  return Number.isFinite(n) && Math.abs(n * 100 - Math.round(n * 100)) < 1e-9;
+  if (!Number.isFinite(n)) return false;
+
+  const scaled = n * 10 ** MONEY_DECIMAL_PLACES;
+  const nearest = Math.round(scaled);
+  // Scale with |n|: cents/100 is not binary-exact, and 1e-9 is tighter than 1 ULP at ~1e7.
+  const tolerance = Math.max(1e-8, Number.EPSILON * Math.abs(scaled) * 8);
+
+  return Math.abs(scaled - nearest) < tolerance;
 };
 
 interface SelectableAmount {
@@ -33,18 +39,6 @@ export const sumSelectedCents = (
     0,
   );
 
-export const formatMoney = (
-  value: number,
-  {
-    currencyCode = DEFAULT_CURRENCY,
-    locale = DEFAULT_LOCALE,
-  }: MoneyFormatOptions = {},
-) =>
-  new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency: currencyCode,
-  }).format(value);
-
 export const formatMoneyFromCents = (
   cents: number,
   {
@@ -58,3 +52,19 @@ export const formatMoneyFromCents = (
     minimumFractionDigits: 0,
     maximumFractionDigits: MONEY_DECIMAL_PLACES,
   }).format(fromCents(cents));
+
+export const formatSignedMoney = (cents: number, currency: string): string => {
+  const absolute = formatMoneyFromCents(Math.abs(cents), {
+    currencyCode: currency,
+  });
+
+  if (cents > 0) {
+    return `+ ${absolute}`;
+  }
+
+  if (cents < 0) {
+    return `- ${absolute}`;
+  }
+
+  return absolute;
+};

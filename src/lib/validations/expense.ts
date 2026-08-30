@@ -11,7 +11,10 @@ export const AllocationSchema = z.object({
   amount: z.coerce
     .number()
     .min(0, "Value cannot be negative")
-    .refine(isTwoDecimalPlaces, "最多只能到小數第二位"),
+    .refine(
+      isTwoDecimalPlaces,
+      "Amount can only have up to two decimal places",
+    ),
   isSelected: z.boolean(),
   isManual: z.boolean(),
 });
@@ -23,7 +26,10 @@ export const expenseFormSchema = z
       .number()
       .min(0.01, "Amount must be greater than 0")
       .max(10000000, "Amount exceeds the maximum limit")
-      .refine(isTwoDecimalPlaces, "最多只能到小數第二位"),
+      .refine(
+        isTwoDecimalPlaces,
+        "Amount can only have up to two decimal places",
+      ),
     date: z.date(),
     category: z.string().optional(),
     splitMethod: SplitMethodSchema,

@@ -27,7 +27,7 @@ export default async function GroupExpensesPage({
 
   const spend = {
     totalGroupSpend: stats.totalGroupSpend,
-    yourShare: stats.yourShare,
+    yourBalance: stats.yourBalance,
     currency: group.currency,
   };
 
@@ -50,11 +50,11 @@ export default async function GroupExpensesPage({
   }
 
   return (
-    <div className="flex flex-col gap-4 md:gap-6 lg:gap-10">
+    <div className="flex flex-col gap-6 lg:gap-10">
       {spend && (
         <GroupSpendCard
           totalGroupSpend={spend.totalGroupSpend}
-          yourShare={spend.yourShare}
+          yourBalance={spend.yourBalance}
           currency={spend.currency}
         />
       )}

@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { handleError } from "@/lib/utils";
 import { getCurrentUserId } from "@/lib/queries/auth.query";
-import { getGroupLedger } from "@/lib/ledger";
+import { getGroupLedger } from "@/lib/queries/ledger.query";
 
 export async function getGroupByInviteCode(inviteCode: string) {
   try {

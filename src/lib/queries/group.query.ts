@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma/client";
 import { handleError } from "@/lib/utils";
 import { getCurrentUserId } from "@/lib/queries/auth.query";
+import { getMemberLedger } from "@/lib/queries/ledger.query";
 
 type AllGroupsData = Prisma.GroupGetPayload<{
   select: {
@@ -97,6 +98,7 @@ export const getGroupById = cache(
             orderBy: [{ isActive: "desc" }, { name: "asc" }],
           },
           expenses: {
+            where: { deletedAt: null },
             orderBy: { date: "desc" },
             take: 20,
             include: {
@@ -122,31 +124,32 @@ export const getGroupById = cache(
 export const getGroupStats = cache(async (groupId: string) => {
   const currentUserId = await getCurrentUserId();
 
-  if (!currentUserId) {
-    return { totalGroupSpend: 0, yourShare: 0 };
-  }
-
   try {
-    const [expenses, shares] = await Promise.all([
+    const [expenses, yourBalance] = await Promise.all([
       prisma.expense.aggregate({
         where: { groupId },
         _sum: { amountInCents: true },
       }),
-      prisma.expenseShare.aggregate({
-        where: {
-          expense: { groupId },
-          member: { userId: currentUserId, isActive: true },
-        },
-        _sum: { amountInCents: true },
-      }),
+      (async () => {
+        if (!currentUserId) return 0;
+
+        const membership = await prisma.groupMember.findFirst({
+          where: { groupId, userId: currentUserId, isActive: true },
+          select: { id: true },
+        });
+        if (!membership) return 0;
+
+        const ledger = await getMemberLedger(membership.id);
+        return ledger.balanceInCents;
+      })(),
     ]);
 
     return {
       totalGroupSpend: expenses._sum.amountInCents ?? 0,
-      yourShare: shares._sum.amountInCents ?? 0,
+      yourBalance,
     };
   } catch (error) {
     handleError(error);
-    return { totalGroupSpend: 0, yourShare: 0 };
+    return { totalGroupSpend: 0, yourBalance: 0 };
   }
 });

@@ -11,7 +11,7 @@ import {
 } from "@/lib/validations/member";
 import { handleError } from "@/lib/utils";
 import { getCurrentUserId } from "@/lib/queries/auth.query";
-import { getMemberLedger } from "@/lib/ledger";
+import { getMemberLedger } from "@/lib/queries/ledger.query";
 
 type ActionResult = {
   success: boolean;

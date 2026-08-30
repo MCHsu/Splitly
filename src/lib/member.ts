@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { BadgeCheck, BadgeQuestionMark, ShieldCheck } from "lucide-react";
+import { BadgeCheck, BadgeQuestionMark } from "lucide-react";
 
 import type { GroupMemberWithUser } from "@/types/member";
 
@@ -7,13 +7,27 @@ export type { GroupMemberWithUser };
 
 export type MemberKind = "owner" | "linked" | "anonymous" | "unclaimed";
 
-export const getMemberDisplayName = (member: GroupMemberWithUser) =>
-  member.name || member.user?.name || "Unknown";
+export const getMemberDisplayName = (member: GroupMemberWithUser) => {
+  if (member.user && !member.user.isAnonymous) {
+    return member.user.name;
+  }
+
+  return member.name;
+};
 
 export function getMemberKind(member: GroupMemberWithUser): MemberKind {
-  if (member.role === "OWNER") return "owner";
-  if (member.userId == null) return "unclaimed";
-  if (member.user?.isAnonymous) return "anonymous";
+  if (member.role === "OWNER") {
+    return "owner";
+  }
+
+  if (member.userId == null) {
+    return "unclaimed";
+  }
+
+  if (member.user?.isAnonymous) {
+    return "anonymous";
+  }
+
   return "linked";
 }
 
