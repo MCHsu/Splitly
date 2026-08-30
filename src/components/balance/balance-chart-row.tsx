@@ -2,20 +2,20 @@ import { UserAvatar } from "@/components/shared/user-avatar";
 import { cn } from "@/lib/utils";
 
 interface BalanceChartRowProps {
-  variant: "positive" | "negative" | "zero";
   name: string;
+  balanceInCents: number;
   signedAmount: string;
   widthPercent: number;
 }
 
 export function BalanceChartRow({
-  variant,
   name,
+  balanceInCents,
   signedAmount,
   widthPercent,
 }: BalanceChartRowProps) {
-  const isNegative = variant === "negative";
-  const isZero = variant === "zero";
+  const isNegative = balanceInCents < 0;
+  const isPositive = balanceInCents > 0;
 
   const member = (
     <div
@@ -27,7 +27,7 @@ export function BalanceChartRow({
       <UserAvatar name={name} size="md" />
       <span
         className={cn(
-          "truncate text-base font-medium",
+          "truncate text-sm font-medium sm:text-base",
           !isNegative && "order-first",
         )}
       >
@@ -36,9 +36,7 @@ export function BalanceChartRow({
     </div>
   );
 
-  const bar = isZero ? (
-    <div />
-  ) : (
+  const bar = (
     <div
       className={cn(
         "flex h-full min-w-0 items-stretch",
@@ -47,10 +45,9 @@ export function BalanceChartRow({
     >
       <div
         className={cn(
-          "flex h-full items-center px-2 text-sm font-bold whitespace-nowrap text-foreground md:text-base",
-          isNegative
-            ? "justify-end rounded-l-md bg-destructive/40"
-            : "rounded-r-md bg-success/40",
+          "flex h-full items-center px-3 text-sm font-semibold whitespace-nowrap text-foreground tabular-nums sm:text-base",
+          isNegative && "justify-end rounded-l-lg bg-destructive/30",
+          isPositive && "rounded-r-lg bg-success/30",
         )}
         style={{ width: `${widthPercent}%` }}
       >

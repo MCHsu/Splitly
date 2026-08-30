@@ -89,7 +89,7 @@ export function AmountProgress({
       <div className="flex items-end justify-between gap-3">
         <span className="text-sm font-medium text-foreground">{label}</span>
         <p className="tabular-nums">
-          <span className={cn("text-lg font-bold tracking-tight", accent)}>
+          <span className={cn("text-lg font-bold", accent)}>
             {money(currentCents)}
           </span>
           <span className="mx-1 text-sm text-muted-foreground/70">/</span>

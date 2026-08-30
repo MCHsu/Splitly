@@ -43,14 +43,15 @@ export function CategoryField<T extends FieldValues>({
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <Button
-                variant="outline"
+                variant="select"
+                size="select"
                 id="category-picker"
-                className="h-10 w-full justify-between font-normal"
+                className="w-full justify-between text-sm font-normal"
               >
                 <span className="flex min-w-0 items-center gap-2">
                   <span
                     className={cn(
-                      "flex size-7 shrink-0 items-center justify-center rounded-md",
+                      "flex size-7 shrink-0 items-center justify-center rounded-lg",
                       selected.color.bg,
                     )}
                   >
@@ -64,10 +65,10 @@ export function CategoryField<T extends FieldValues>({
               </Button>
             </PopoverTrigger>
             <PopoverContent
-              className="w-[var(--radix-popover-trigger-width)] p-2"
+              className="w-[(--radix-popover-trigger-width)] p-2"
               align="start"
             >
-              <div className="grid grid-cols-3 gap-1 xl:grid-cols-4">
+              <div className="grid grid-cols-2 gap-2 lg:grid-cols-3">
                 {EXPENSE_CATEGORIES.map((category) => {
                   const Icon = category.icon;
                   const isActive = resolvedValue === category.value;
@@ -82,13 +83,13 @@ export function CategoryField<T extends FieldValues>({
                         setOpen(false);
                       }}
                       className={cn(
-                        "flex flex-col items-center gap-1.5 rounded-md px-2 py-2.5 text-center text-xs transition-colors hover:bg-accent",
-                        isActive && "bg-accent ring-2 ring-ring/40",
+                        "flex flex-row items-center gap-2 rounded-lg px-2 py-2.5 text-center text-xs transition-colors hover:bg-muted",
+                        isActive && "bg-muted ring-1 ring-ring/40",
                       )}
                     >
                       <span
                         className={cn(
-                          "flex size-9 items-center justify-center rounded-md",
+                          "flex size-8 items-center justify-center rounded-lg",
                           category.color.bg,
                         )}
                       >

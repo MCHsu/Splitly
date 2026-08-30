@@ -57,7 +57,7 @@ export function SelectField<T extends FieldValues>({
             }}
             disabled={disabled}
           >
-            <SelectTrigger className="h-10 min-h-10">
+            <SelectTrigger className="h-12 min-h-12">
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent>

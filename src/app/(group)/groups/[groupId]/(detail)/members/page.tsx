@@ -21,7 +21,7 @@ export default async function GroupMembersPage({
   const memberCount = data.members.length;
 
   return (
-    <div className="flex flex-col gap-4 md:gap-6 lg:gap-10">
+    <div className="flex flex-col gap-6 lg:gap-10">
       <div className="w-full">
         <p className="mb-3 text-sm text-muted-foreground">Invite</p>
         <InviteLink inviteCode={data.inviteCode} />

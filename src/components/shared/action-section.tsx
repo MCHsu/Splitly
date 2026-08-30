@@ -38,14 +38,10 @@ export function ActionSection({
         </div>
 
         <Button
-          variant="outline"
+          variant={variant === "destructive" ? "destructive" : "outline"}
           disabled={disabled}
           onClick={onAction}
-          className={cn(
-            "shrink-0",
-            variant === "destructive" &&
-              "border-destructive text-destructive hover:bg-destructive/10 hover:text-destructive",
-          )}
+          className="shrink-0"
         >
           {actionLabel}
         </Button>

@@ -60,6 +60,7 @@ export function AmountField<T extends FieldValues>({
       return (
         <BaseInput
           {...inputProps}
+          className="tabular-nums"
           prefix={<InputGroupText>{symbol}</InputGroupText>}
         />
       );
@@ -81,13 +82,6 @@ export function AmountField<T extends FieldValues>({
           allowNegative={false}
           value={value ?? ""}
           onValueChange={(values) => {
-            // values 會提供三種格式，例如輸入 "1,234.50" 時：
-            // formattedValue: "1,234.50" (帶逗號的字串)
-            // value: "1234.50" (不帶逗號的字串)
-            // floatValue: 1234.5 (純數字 Number)
-
-            // 直接把「純字串數字」存進表單，省去 parseNumber 的麻煩！
-            // 存字串的好處是可以保留結尾的浮點小數點 (例如 "10.")，讓使用者順暢輸入
             onChange(values.value);
           }}
           onBlur={() => {

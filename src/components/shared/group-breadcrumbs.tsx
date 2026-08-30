@@ -15,10 +15,11 @@ export async function GroupBreadcrumbs({
   return (
     <Breadcrumbs
       items={[
-        { label: "Groups", href: "/groups" },
+        { label: "My Groups", href: "/groups" },
         {
-          label: group?.name ?? "Group",
+          label: group?.name ?? "My Group",
           href: trailing.length > 0 ? `/groups/${groupId}/expenses` : undefined,
+          shrink: true,
         },
         ...trailing,
       ]}

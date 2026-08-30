@@ -8,16 +8,26 @@ import {
   MEMBER_KIND_ICON,
   MEMBER_KIND_LABEL,
   type GroupMemberWithUser,
+  type MemberKind,
 } from "@/lib/member";
 import { cn } from "@/lib/utils";
 import { UserAvatar } from "@/components/shared/user-avatar";
-import { SectionContainerItem } from "@/components/shared/section-container";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+
+const PILL_CLASS =
+  "mt-0.5 inline-flex rounded-lg px-1.5 py-0.5 text-xs font-medium";
+
+const MEMBER_KIND_BADGE_CLASS: Record<MemberKind, string> = {
+  owner: cn(PILL_CLASS, "bg-primary/10 text-primary"),
+  linked: cn(PILL_CLASS, "bg-success/10 text-success"),
+  anonymous: cn(PILL_CLASS, "bg-muted-foreground/10 text-muted-foreground"),
+  unclaimed: "text-xs font-medium text-muted-foreground",
+};
 
 interface MemberRowProps {
   member: GroupMemberWithUser;
@@ -39,49 +49,29 @@ export function MemberRow({
   const kind = getMemberKind(member);
   const KindIcon = MEMBER_KIND_ICON[kind];
   const displayName = getMemberDisplayName(member);
-  const deleteBlocked = hasFinancialRecords;
 
   return (
-    <SectionContainerItem
-      className={cn(
-        "flex items-center justify-between gap-4",
-        !member.isActive && "opacity-60",
-      )}
-    >
+    <div className="flex items-center justify-between gap-4 py-4">
       <div className="flex min-w-0 items-center gap-3">
         <UserAvatar name={displayName} size="lg" />
         <div className="min-w-0">
-          <p className="flex items-center gap-1.5 truncate font-medium">
-            <span className="truncate">
-              {displayName}
-              {isSelf && (
-                <span className="ml-1.5 text-xs text-primary">(You)</span>
-              )}
-            </span>
-            {KindIcon && (
-              <KindIcon className="size-4 shrink-0 text-muted-foreground" />
-            )}
+          <p className="flex min-w-0 items-center gap-1.5 font-medium">
+            <span className="truncate">{displayName}</span>
+            {isSelf ? (
+              <span className="shrink-0 text-xs text-primary">(You)</span>
+            ) : null}
           </p>
-          {kind === "owner" && (
-            <span className="mt-0.5 inline-flex rounded-lg bg-primary/10 px-1.5 py-0.5 text-xs font-medium text-primary">
-              {MEMBER_KIND_LABEL.owner}
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+            <span
+              className={cn(
+                "inline-flex items-center gap-1",
+                MEMBER_KIND_BADGE_CLASS[kind],
+              )}
+            >
+              {KindIcon ? <KindIcon className="size-3 shrink-0" /> : null}
+              {MEMBER_KIND_LABEL[kind]}
             </span>
-          )}
-          {kind === "linked" && (
-            <span className="mt-0.5 inline-flex rounded-lg bg-success/10 px-1.5 py-0.5 text-xs font-medium text-success">
-              {MEMBER_KIND_LABEL.linked}
-            </span>
-          )}
-          {kind === "anonymous" && (
-            <span className="mt-0.5 inline-flex rounded-lg bg-muted-foreground/10 px-1.5 py-0.5 text-xs font-medium text-muted-foreground">
-              {MEMBER_KIND_LABEL.anonymous}
-            </span>
-          )}
-          {kind === "unclaimed" && (
-            <span className="text-xs font-medium text-muted-foreground">
-              {MEMBER_KIND_LABEL.unclaimed}
-            </span>
-          )}
+          </div>
         </div>
       </div>
 
@@ -91,23 +81,32 @@ export function MemberRow({
             <span>
               <Button
                 variant="ghost"
-                size="icon"
-                disabled={isPending || deleteBlocked}
+                size="icon-lg"
+                disabled={isPending || hasFinancialRecords}
                 onClick={onDelete}
-                className={cn(deleteBlocked && "opacity-40")}
-                aria-label={`Delete ${displayName}`}
+                className={cn(
+                  hasFinancialRecords
+                    ? "text-muted-foreground"
+                    : "text-destructive",
+                )}
+                aria-label={
+                  hasFinancialRecords
+                    ? `Can't delete ${displayName}: has expenses or settlements`
+                    : `Delete ${displayName}`
+                }
               >
-                <Trash2 className="size-4" />
+                <Trash2 className="size-5" />
               </Button>
             </span>
           </TooltipTrigger>
-          {deleteBlocked && (
+
+          {hasFinancialRecords ? (
             <TooltipContent>
-              Can&apos;t delete a member with expenses or settlements
+              Can't delete a member with expenses or settlements
             </TooltipContent>
-          )}
+          ) : null}
         </Tooltip>
       )}
-    </SectionContainerItem>
+    </div>
   );
 }

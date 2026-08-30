@@ -11,6 +11,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { ControlledField } from "@/components/shared/form/controlled-field";
+import { formatDate } from "@/lib/date";
 
 interface DateFieldProps<T extends FieldValues> {
   name: Path<T>;
@@ -27,13 +28,14 @@ export const DateField = <T extends FieldValues>({
     <ControlledField name={name} label={label}>
       {({ value, onChange }) => (
         <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger className="h-10" asChild>
+          <PopoverTrigger asChild>
             <Button
-              variant="outline"
+              variant="select"
+              size="select"
               id="date-picker"
-              className="w-32 justify-between font-normal"
+              className="w-32 justify-between text-sm font-normal"
             >
-              {value ? value.toLocaleDateString() : "Select date"}
+              {value ? formatDate(value) : "Select date"}
               <CalendarIcon />
             </Button>
           </PopoverTrigger>

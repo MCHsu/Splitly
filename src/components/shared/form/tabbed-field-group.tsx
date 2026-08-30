@@ -28,14 +28,14 @@ export function TabbedFieldGroup({
             <TabsTrigger
               key={option.value}
               value={option.value}
-              className="text-sm"
+              className="rounded-lg text-sm data-[state=active]:shadow-sm"
             >
               {option.label}
             </TabsTrigger>
           ))}
         </TabsList>
 
-        <TabsContent value={value} className="mt-4 animate-in fade-in-50">
+        <TabsContent value={value} className="mt-2 animate-in fade-in-50">
           {children(value)}
         </TabsContent>
       </Tabs>

@@ -1,7 +1,7 @@
 import { SectionContainer } from "@/components/shared/section-container";
 import { UserAvatar } from "@/components/shared/user-avatar";
 import { formatMoneyFromCents } from "@/lib/money";
-import { ArrowBigDownDash, ArrowBigRightDash } from "lucide-react";
+import { MoveDown, MoveRight } from "lucide-react";
 
 export type SuggestedTransfer = {
   fromMemberId: string;
@@ -41,18 +41,14 @@ export function SuggestedTransfersCard({
                 className="flex items-center justify-between gap-3 pb-4 text-sm"
               >
                 <div className="flex min-w-0 flex-col items-center gap-3 truncate sm:flex-row">
-                  <div className="flex items-center gap-3">
-                    <UserAvatar name={transfer.fromName} size="md" />
-                    <span className="font-medium">{transfer.fromName}</span>
-                  </div>
-                  <ArrowBigRightDash className="hidden size-6 text-muted-foreground sm:block" />
-                  <ArrowBigDownDash className="block size-6 text-muted-foreground sm:hidden" />
-                  <div className="flex items-center gap-3">
-                    <UserAvatar name={transfer.toName} size="md" />
-                    <span className="font-medium">{transfer.toName}</span>
-                  </div>
+                  <UserAvatar name={transfer.fromName} size="md" showName />
+
+                  <MoveRight className="hidden size-6 text-muted-foreground sm:block" />
+                  <MoveDown className="block size-6 text-muted-foreground sm:hidden" />
+
+                  <UserAvatar name={transfer.toName} size="md" showName />
                 </div>
-                <span className="shrink-0 text-lg font-bold sm:text-xl">
+                <span className="shrink-0 text-base font-semibold tabular-nums sm:text-lg">
                   {formatMoneyFromCents(transfer.amountInCents, {
                     currencyCode: currency,
                   })}

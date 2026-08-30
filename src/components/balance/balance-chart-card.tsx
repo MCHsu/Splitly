@@ -1,6 +1,6 @@
 import { SectionContainer } from "@/components/shared/section-container";
 import { BalanceChartRow } from "@/components/balance/balance-chart-row";
-import { formatMoneyFromCents } from "@/lib/money";
+import { formatSignedMoney } from "@/lib/money";
 
 export type BalanceChartDatum = {
   memberId: string;
@@ -12,15 +12,6 @@ interface BalanceChartCardProps {
   data: BalanceChartDatum[];
   currency?: string;
   className?: string;
-}
-
-function formatSignedMoney(cents: number, currency: string): string {
-  const absolute = formatMoneyFromCents(Math.abs(cents), {
-    currencyCode: currency,
-  });
-  if (cents > 0) return `+ ${absolute}`;
-  if (cents < 0) return `- ${absolute}`;
-  return absolute;
 }
 
 export function BalanceChartCard({
@@ -63,14 +54,8 @@ export function BalanceChartCard({
                   className="grid h-10 grid-cols-2 items-center"
                 >
                   <BalanceChartRow
-                    variant={
-                      entry.balanceInCents > 0
-                        ? "positive"
-                        : entry.balanceInCents < 0
-                          ? "negative"
-                          : "zero"
-                    }
                     name={entry.name}
+                    balanceInCents={entry.balanceInCents}
                     signedAmount={signedAmount}
                     widthPercent={widthPercent}
                   />

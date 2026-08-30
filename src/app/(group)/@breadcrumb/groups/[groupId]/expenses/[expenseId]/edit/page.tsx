@@ -21,6 +21,7 @@ export default async function Page({
         {
           label: expense.description,
           href: `/groups/${groupId}/expenses/${expenseId}`,
+          shrink: true,
         },
         { label: "Edit" },
       ]}

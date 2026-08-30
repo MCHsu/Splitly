@@ -16,10 +16,12 @@ export function GroupCard({
 }: GroupCardProps) {
   return (
     <Link href={`/groups/${id}`}>
-      <div className="flex cursor-pointer items-center justify-between rounded-2xl border bg-card p-6 transition-shadow hover:bg-muted sm:rounded-3xl">
-        <div>
-          <h2 className="mb-2 text-xl font-semibold">{name}</h2>
-          <div className="space-y-1 text-sm text-muted-foreground">
+      <div className="flex w-full items-center justify-between gap-4 rounded-2xl border bg-card p-6 hover:bg-muted sm:rounded-[20px] xl:gap-6">
+        <div className="flex min-w-0 flex-1 flex-col items-start gap-2">
+          <h2 className="w-full truncate text-xl font-semibold first-letter:uppercase">
+            {name}
+          </h2>
+          <div className="flex flex-col items-start text-sm text-muted-foreground">
             <p>{memberCount} members</p>
             <p>{expenseCount} expenses</p>
           </div>

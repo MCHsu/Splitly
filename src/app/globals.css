@@ -3,7 +3,7 @@
 
 @theme inline {
   --color-background: oklch(1 0 0);
-  --color-foreground: oklch(32.1% 0 0);
+  --color-foreground: oklch(36.4% 0 0);
 
   --color-sidebar-ring: oklch(0.705 0.015 286.067);
   --color-sidebar-border: oklch(0.92 0.004 286.32);
@@ -39,11 +39,11 @@
   --color-category-groceries: oklch(62.7% 0.194 149.214);
   --color-category-transport: oklch(54.6% 0.245 262.881);
   --color-category-stay: oklch(54.1% 0.281 293.009);
-  --color-category-fun: oklch(59.2% 0.249 0.584);
-  --color-category-shopping: oklch(64.6% 0.222 41.116);
+  --color-category-fun: oklch(61% 0.203 342.3);
+  --color-category-shopping: oklch(70.6% 0.178 127);
   --color-category-bills: oklch(64% 0.135 107.2);
   --color-category-travel: oklch(58.8% 0.158 241.966);
-  --color-category-health: oklch(58.6% 0.253 17.585);
+  --color-category-health: oklch(57.9% 0.175 24.4);
   --color-category-other: oklch(44.6% 0.03 256.802);
 
   --color-accent-foreground: oklch(0.21 0.006 285.885);
