@@ -1,6 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+
 import prisma from "@/lib/prisma";
 import { handleError } from "@/lib/utils";
 import { ExpenseFormData, expenseFormSchema } from "@/lib/validations/expense";
@@ -56,11 +58,12 @@ export async function createExpense(
 
     revalidatePath(`/groups/${groupId}`);
     revalidatePath(`/groups/${groupId}/expenses`);
-    return { success: true };
   } catch (error) {
     handleError(error);
     return { success: false, error: "Failed to create expense" };
   }
+
+  redirect(`/groups/${groupId}/expenses`);
 }
 
 export async function updateExpense(
@@ -135,9 +138,52 @@ export async function updateExpense(
     revalidatePath(`/groups/${groupId}`);
     revalidatePath(`/groups/${groupId}/expenses`);
     revalidatePath(`/groups/${groupId}/expenses/${expenseId}`);
-    return { success: true as const };
   } catch (error) {
     handleError(error);
     return { success: false as const, error: "Failed to update expense" };
   }
+
+  redirect(`/groups/${existing.groupId}/expenses/${expenseId}`);
+}
+
+export async function deleteExpense(expenseId: string) {
+  const currentUserId = await getCurrentUserId();
+  if (!currentUserId) {
+    throw new Error("User must be authenticated to delete an expense");
+  }
+
+  const existing = await prisma.expense.findFirst({
+    where: {
+      id: expenseId,
+      deletedAt: null,
+      group: {
+        members: {
+          some: { userId: currentUserId, isActive: true },
+        },
+      },
+    },
+    select: { id: true, groupId: true },
+  });
+
+  if (!existing) {
+    return { success: false as const, error: "Expense not found" };
+  }
+
+  try {
+    await prisma.expense.update({
+      where: { id: expenseId },
+      data: {
+        deletedAt: new Date(),
+        updatedById: currentUserId,
+      },
+    });
+
+    revalidatePath(`/groups/${existing.groupId}`);
+    revalidatePath(`/groups/${existing.groupId}/expenses`);
+  } catch (error) {
+    handleError(error);
+    return { success: false as const, error: "Failed to delete expense" };
+  }
+
+  redirect(`/groups/${existing.groupId}/expenses`);
 }

@@ -1,12 +1,12 @@
 import { notFound } from "next/navigation";
-import { Trash2, DoorOpen } from "lucide-react";
+import { Trash2 } from "lucide-react";
 
-import { updateGroup } from "@/app/actions/group.action";
+import { updateGroup, deleteGroup } from "@/app/actions/group.action";
 import { getCurrentUserId } from "@/lib/queries/auth.query";
 import { getGroupById } from "@/lib/queries/group.query";
 import { GroupForm } from "@/components/group/group-form";
 import { ActionSection } from "@/components/shared/action-section";
-import type { GroupFormData } from "@/lib/validations/group";
+import { getCurrencies } from "@/lib/currencies";
 
 export default async function GroupSettingsPage({
   params,
@@ -14,7 +14,10 @@ export default async function GroupSettingsPage({
   params: Promise<{ groupId: string }>;
 }) {
   const { groupId } = await params;
-  const group = await getGroupById(groupId);
+  const [group, currencies] = await Promise.all([
+    getGroupById(groupId),
+    getCurrencies(),
+  ]);
 
   if (!group) {
     notFound();
@@ -26,24 +29,22 @@ export default async function GroupSettingsPage({
   );
   const isOwner = callerMembership?.role === "OWNER";
 
-  async function handleUpdate(data: GroupFormData) {
-    "use server";
-    await updateGroup(groupId, data);
-  }
+  const updateGroupWithId = updateGroup.bind(null, groupId);
 
   return (
-    <div className="flex flex-col gap-4 md:gap-6 lg:gap-10">
+    <div className="flex flex-col gap-6 lg:gap-10">
       <div className="w-full">
         <p className="mb-3 text-sm text-muted-foreground">Group details</p>
 
         <GroupForm
           mode="edit"
+          currencies={currencies}
           defaultValues={{
             name: group.name,
-            description: group.description ?? "",
             currency: group.currency,
+            description: group.description ?? "",
           }}
-          onSubmit={handleUpdate}
+          onSubmit={updateGroupWithId}
         />
       </div>
 
@@ -56,6 +57,7 @@ export default async function GroupSettingsPage({
             actionLabel="Delete"
             icon={<Trash2 className="text-destructive" />}
             variant="destructive"
+            onAction={deleteGroup.bind(null, groupId)}
           />
         </div>
       )}

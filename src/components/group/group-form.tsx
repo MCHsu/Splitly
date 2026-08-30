@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -10,52 +9,43 @@ import { SelectField } from "@/components/shared/form/select-field";
 import { TextareaField } from "@/components/shared/form/textarea-field";
 import { FormLayout } from "@/components/shared/form/form-layout";
 import { SectionContainer } from "@/components/shared/section-container";
-import { createGroup } from "@/app/actions/group.action";
-import type { CurrencyItem } from "@/app/api/currencies/route";
+import type { CurrencyItem } from "@/lib/currencies";
 
 interface GroupFormProps {
   mode?: "add" | "edit";
   defaultValues?: Partial<GroupFormData>;
-  onSubmit?: (data: GroupFormData) => void | Promise<unknown>;
+  currencies: CurrencyItem[];
+  onSubmit: (data: GroupFormData) => Promise<unknown>;
   onCancel?: () => void;
 }
 
 export function GroupForm({
   mode = "add",
   defaultValues,
+  currencies,
   onSubmit: onSubmitProp,
   onCancel,
 }: GroupFormProps) {
-  const [currencies, setCurrencies] = useState<CurrencyItem[]>([]);
-
-  useEffect(() => {
-    fetch("/api/currencies")
-      .then((r) => r.json())
-      .then((data: CurrencyItem[]) => setCurrencies(data))
-      .catch(() => {});
-  }, []);
-
   const methods = useForm<GroupFormData>({
     resolver: zodResolver(groupFormSchema),
     defaultValues: defaultValues || {
       name: "",
+      currency: "",
       description: "",
     },
   });
 
   const {
-    formState: { isSubmitting },
+    reset,
+    formState: { isSubmitting, isDirty },
   } = methods;
 
   const actionText = mode === "edit" ? "Update" : "Create";
+  const isSubmitDisabled = mode === "edit" && !isDirty;
 
   const onSubmit: SubmitHandler<GroupFormData> = async (data) => {
-    if (onSubmitProp) {
-      await onSubmitProp(data);
-      return;
-    }
-
-    await createGroup(data);
+    await onSubmitProp(data);
+    reset(data);
   };
 
   return (
@@ -81,7 +71,7 @@ export function GroupForm({
 
           <TextareaField
             name="description"
-            label="Description"
+            label="Description (Optional)"
             placeholder="What is this group for?"
           />
         </FormLayout.Section>
@@ -90,6 +80,7 @@ export function GroupForm({
           onCancel={onCancel}
           submitText={actionText}
           isSubmitting={isSubmitting}
+          isSubmitDisabled={isSubmitDisabled}
         />
       </FormLayout>
     </SectionContainer>

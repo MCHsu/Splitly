@@ -1,23 +1,28 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
 interface BackButtonProps {
-  onClick: () => void;
+  onClick?: () => void;
+  className?: string;
 }
 
-export function BackButton({ onClick }: BackButtonProps) {
+export function BackButton({ onClick, className }: BackButtonProps) {
+  const router = useRouter();
+
   return (
     <Button
       type="button"
       variant="ghost"
-      size="sm"
-      onClick={onClick}
-      className="text-muted-foreground hover:text-foreground"
+      size="icon-lg"
+      onClick={onClick ?? (() => router.back())}
+      className={cn("text-muted-foreground hover:text-foreground", className)}
     >
-      <ArrowLeft />
-      Back
+      <ArrowLeft className="size-5" />
     </Button>
   );
 }

@@ -4,33 +4,31 @@ import { useMemo, useState } from "react";
 import { useForm, SubmitHandler, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { SectionContainer } from "@/components/shared/section-container";
 import { FieldGroup } from "@/components/ui/field";
 import { FormLayout } from "@/components/shared/form/form-layout";
 import { InputField } from "@/components/shared/form/input-field";
 import { AmountField } from "@/components/shared/form/amount-field";
 import { DateField } from "@/components/shared/form/date-field";
 import { TextareaField } from "@/components/shared/form/textarea-field";
-import { SectionContainer } from "@/components/shared/section-container";
 import { CategoryField } from "@/components/shared/form/category-field";
 import { PaidBySection } from "@/components/expense/form/paid-by-section";
 import { SplitMethodSection } from "@/components/expense/form/split-method-section";
 import { expenseFormSchema, ExpenseFormData } from "@/lib/validations/expense";
-import { createExpense } from "@/app/actions/expense.action";
+
 import { useGroup } from "@/providers/group-provider";
 import { useMembers } from "@/providers/member-provider";
 import { useUser } from "@/providers/user-provider";
 
 interface ExpenseFormProps {
-  groupId?: string;
   mode?: "add" | "edit";
   defaultValues?: ExpenseFormData;
-  onSubmit?: (data: ExpenseFormData) => void | Promise<void>;
+  onSubmit: (data: ExpenseFormData) => Promise<unknown>;
   onCancel?: () => void;
   cancelHref?: string;
 }
 
 export function ExpenseForm({
-  groupId,
   mode = "add",
   defaultValues,
   onSubmit: onSubmitProp,
@@ -79,20 +77,9 @@ export function ExpenseForm({
   } = methods;
 
   const actionText = mode === "edit" ? "Update" : "Create";
-
+  console.log("onSubmit", getValues());
   const onSubmit: SubmitHandler<ExpenseFormData> = async (data) => {
-    if (onSubmitProp) {
-      await onSubmitProp(data);
-      return;
-    }
-    if (groupId) {
-      const result = await createExpense(groupId, data);
-      if (result.success) {
-        onCancel?.();
-      } else {
-        console.error("Failed to create expense", result.error);
-      }
-    }
+    await onSubmitProp(data);
   };
 
   const [syncedAmount, setSyncedAmount] = useState(defaultValues?.amount || 0);
@@ -140,13 +127,12 @@ export function ExpenseForm({
 
           <TextareaField
             name="note"
-            label="Note"
+            label="Note (Optional)"
             placeholder="Add any extra details..."
           />
         </FormLayout.Section>
 
         <FormLayout.Actions
-          className="w-full"
           onCancel={onCancel}
           cancelHref={cancelHref}
           submitText={actionText}

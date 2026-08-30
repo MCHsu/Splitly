@@ -9,7 +9,6 @@ import {
 } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 
 import { FieldGroup, FieldSet } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
@@ -39,6 +38,7 @@ interface FormLayoutActionsProps {
   cancelHref?: string;
   submitText: string;
   isSubmitting?: boolean;
+  isSubmitDisabled?: boolean;
   cancelText?: string;
   className?: string;
 }
@@ -56,7 +56,7 @@ function FormLayoutRoot<T extends FieldValues>({
       <FormProvider {...methods}>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className={cn("flex flex-col gap-6 lg:gap-10", className)}
+          className={cn("flex flex-col gap-8 lg:gap-10", className)}
         >
           {children}
         </form>
@@ -74,14 +74,11 @@ function FormLayoutHeader({
 
   return (
     <div className={className}>
-      <Button variant="ghost" className="mb-4" onClick={() => router.back()}>
-        <ArrowLeft className="mr-2 h-4 w-4" />
-        Back
-      </Button>
-
       {title && <h2 className="mb-2 text-3xl font-bold">{title}</h2>}
 
-      {description && <p className="mb-8 text-muted-foreground">{description}</p>}
+      {description && (
+        <p className="mb-8 text-muted-foreground">{description}</p>
+      )}
     </div>
   );
 }
@@ -99,34 +96,50 @@ function FormLayoutActions({
   cancelHref,
   submitText,
   isSubmitting,
+  isSubmitDisabled,
   cancelText = "Cancel",
   className,
 }: FormLayoutActionsProps) {
-  return (
-    <div className={cn("flex justify-end gap-6", className)}>
-      {cancelHref ? (
+  const sharedButtonClasses = "flex-1 md:flex-none md:w-32 lg:w-40";
+
+  const renderCancelButton = () => {
+    if (cancelHref) {
+      return (
         <Button
           type="button"
           variant="outline"
           asChild
-          className="w-28 md:w-32 lg:w-40"
+          className={sharedButtonClasses}
         >
           <Link href={cancelHref}>{cancelText}</Link>
         </Button>
-      ) : onCancel ? (
+      );
+    }
+
+    if (onCancel) {
+      return (
         <Button
           type="button"
           variant="outline"
           onClick={onCancel}
-          className="w-28 md:w-32 lg:w-40"
+          className={sharedButtonClasses}
         >
           {cancelText}
         </Button>
-      ) : null}
+      );
+    }
+
+    return null;
+  };
+
+  return (
+    <div className={cn("flex justify-end gap-4 md:gap-6", className)}>
+      {renderCancelButton()}
+
       <Button
         type="submit"
-        disabled={isSubmitting}
-        className="w-28 md:w-32 lg:w-40"
+        disabled={isSubmitting || isSubmitDisabled}
+        className={sharedButtonClasses}
       >
         {isSubmitting && <Spinner />}
         {submitText}

@@ -112,3 +112,16 @@ export async function updateGroup(groupId: string, formData: GroupFormData) {
     return { success: false as const, error: "Failed to update group" };
   }
 }
+
+export async function deleteGroup(groupId: string) {
+  try {
+    await prisma.group.delete({
+      where: { id: groupId },
+    });
+
+    revalidatePath("/groups");
+  } catch (error) {
+    handleError(error);
+    return { success: false as const, error: "Failed to delete group" };
+  }
+}

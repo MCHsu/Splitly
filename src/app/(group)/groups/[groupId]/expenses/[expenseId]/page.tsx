@@ -1,10 +1,13 @@
 import { notFound } from "next/navigation";
-import { Pencil } from "lucide-react";
+import Link from "next/link";
+import { Pencil, Trash2 } from "lucide-react";
 
 import { getExpenseById } from "@/lib/queries/expense.query";
 import { getCurrentUserId } from "@/lib/queries/auth.query";
 import { ExpenseDetail } from "@/components/expense/detail/expense-detail";
 import { PageHeader } from "@/components/shared/page-header";
+import { Button } from "@/components/ui/button";
+import { deleteExpense } from "@/app/actions/expense.action";
 
 export default async function ExpenseDetailPage({
   params,
@@ -17,6 +20,11 @@ export default async function ExpenseDetailPage({
     getCurrentUserId(),
   ]);
 
+  async function deleteExpenseWithId() {
+    "use server";
+    await deleteExpense(expenseId);
+  }
+
   if (!expense || expense.groupId !== groupId) {
     notFound();
   }
@@ -24,12 +32,23 @@ export default async function ExpenseDetailPage({
   return (
     <>
       <PageHeader
-        title="Expense"
-        action={{
-          href: `/groups/${groupId}/expenses/${expenseId}/edit`,
-          label: "Edit",
-          icon: Pencil,
-        }}
+        // showBackButton
+        actions={
+          <>
+            <form action={deleteExpenseWithId}>
+              <Button type="submit" variant="destructive">
+                <Trash2 />
+                {/* Delete */}
+              </Button>
+            </form>
+            <Button asChild>
+              <Link href={`/groups/${groupId}/expenses/${expenseId}/edit`}>
+                <Pencil />
+                Edit
+              </Link>
+            </Button>
+          </>
+        }
       />
       <ExpenseDetail
         expense={expense}

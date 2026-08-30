@@ -20,12 +20,16 @@ export default async function GroupsPage() {
   return (
     <>
       <PageHeader
-        title="Groups"
-        action={{
-          href: "/groups/new",
-          label: "New Group",
-          icon: Plus,
-        }}
+        title="My Groups"
+        showBackButton={false}
+        actions={
+          <Button asChild>
+            <Link href="/groups/new">
+              <Plus />
+              New Group
+            </Link>
+          </Button>
+        }
       />
 
       {groups.length === 0 ? (
