@@ -35,7 +35,7 @@ export function ExpenseDetail({
   currentUserId,
 }: ExpenseDetailProps) {
   const category =
-    getExpenseCategory(expense.category ?? "") ??
+    getExpenseCategory(expense.category) ??
     EXPENSE_CATEGORIES.find((c) => c.value === "other")!;
   const CategoryIcon = category.icon;
 
