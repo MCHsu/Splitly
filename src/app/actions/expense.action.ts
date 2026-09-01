@@ -56,8 +56,8 @@ export async function createExpense(
       },
     });
 
-    revalidatePath(`/groups/${groupId}`);
     revalidatePath(`/groups/${groupId}/expenses`);
+    revalidatePath(`/groups/${groupId}/balance`);
   } catch (error) {
     handleError(error);
     return { success: false, error: "Failed to create expense" };
@@ -135,8 +135,8 @@ export async function updateExpense(
     });
 
     const groupId = existing.groupId;
-    revalidatePath(`/groups/${groupId}`);
     revalidatePath(`/groups/${groupId}/expenses`);
+    revalidatePath(`/groups/${groupId}/balance`);
     revalidatePath(`/groups/${groupId}/expenses/${expenseId}`);
   } catch (error) {
     handleError(error);
@@ -178,8 +178,8 @@ export async function deleteExpense(expenseId: string) {
       },
     });
 
-    revalidatePath(`/groups/${existing.groupId}`);
     revalidatePath(`/groups/${existing.groupId}/expenses`);
+    revalidatePath(`/groups/${existing.groupId}/balance`);
   } catch (error) {
     handleError(error);
     return { success: false as const, error: "Failed to delete expense" };

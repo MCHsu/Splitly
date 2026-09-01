@@ -83,7 +83,7 @@ export async function getMemberManagementData(groupId: string) {
     return null;
   }
 
-  const [members, group] = await Promise.all([
+  const [members, group, ledger] = await Promise.all([
     prisma.groupMember.findMany({
       where: { groupId },
       include: { user: true },
@@ -93,13 +93,12 @@ export async function getMemberManagementData(groupId: string) {
       where: { id: groupId },
       select: { inviteCode: true },
     }),
+    getGroupLedger(groupId),
   ]);
 
   if (!group) {
     return null;
   }
-
-  const ledger = await getGroupLedger(groupId);
 
   const hasFinancialRecords: Record<string, boolean> = {};
 

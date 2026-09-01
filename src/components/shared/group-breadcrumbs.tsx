@@ -1,4 +1,4 @@
-import { getGroupById } from "@/lib/queries/group.query";
+import { getGroupSummary } from "@/lib/queries/group.query";
 import { Breadcrumbs, type Crumb } from "@/components/shared/breadcrumbs";
 
 interface GroupBreadcrumbsProps {
@@ -10,7 +10,7 @@ export async function GroupBreadcrumbs({
   groupId,
   trailing = [],
 }: GroupBreadcrumbsProps) {
-  const group = await getGroupById(groupId);
+  const group = await getGroupSummary(groupId);
 
   return (
     <Breadcrumbs

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Plus, Users } from "lucide-react";
 
 import {
@@ -49,10 +50,10 @@ export async function AppSidebar() {
               {navItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link href={item.url}>
                       <item.icon strokeWidth={2.5} />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

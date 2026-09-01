@@ -1,7 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useForm, SubmitHandler, useWatch, type Resolver } from "react-hook-form";
+import {
+  useForm,
+  SubmitHandler,
+  useWatch,
+  type Resolver,
+} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { SectionContainer } from "@/components/shared/section-container";
@@ -17,11 +22,11 @@ import { SplitMethodSection } from "@/components/expense/form/split-method-secti
 import { isExpenseFormUnchanged } from "@/lib/domain/expense-form-values";
 import { expenseFormSchema, ExpenseFormData } from "@/lib/validations/expense";
 
-import { useGroup } from "@/providers/group-provider";
 import { useMembers } from "@/providers/member-provider";
 import { useUser } from "@/providers/user-provider";
 
 interface ExpenseFormProps {
+  currency: string;
   mode?: "add" | "edit";
   defaultValues?: ExpenseFormData;
   onSubmit: (data: ExpenseFormData) => Promise<unknown>;
@@ -30,23 +35,22 @@ interface ExpenseFormProps {
 }
 
 export function ExpenseForm({
+  currency,
   mode = "add",
   defaultValues,
   onSubmit: onSubmitProp,
   onCancel,
   cancelHref,
 }: ExpenseFormProps) {
-  const { activeMembers } = useMembers();
-  const { currency } = useGroup();
+  const { members } = useMembers();
   const { user } = useUser();
 
   const currentUser =
-    activeMembers.find((member) => member.userId === user?.id) ??
-    activeMembers[0];
+    members.find((member) => member.userId === user?.id) ?? members[0];
 
   // Every member gets a row in both lists; `isSelected` decides who is actually involved.
   const initialValues = useMemo<ExpenseFormData>(() => {
-    const rows = activeMembers.map((member) => ({
+    const rows = members.map((member) => ({
       memberId: member.id,
       amount: 0,
       isSelected: true,
@@ -65,7 +69,7 @@ export function ExpenseForm({
       })),
       allocations: rows,
     };
-  }, [activeMembers, currentUser?.id]);
+  }, [members, currentUser?.id]);
 
   const baselineValues = defaultValues ?? initialValues;
 

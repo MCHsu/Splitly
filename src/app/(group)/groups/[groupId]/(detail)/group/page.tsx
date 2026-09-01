@@ -2,8 +2,7 @@ import { notFound } from "next/navigation";
 import { Trash2 } from "lucide-react";
 
 import { updateGroup, deleteGroup } from "@/app/actions/group.action";
-import { getCurrentUserId } from "@/lib/queries/auth.query";
-import { getGroupById } from "@/lib/queries/group.query";
+import { getGroupSettings } from "@/lib/queries/group.query";
 import { GroupForm } from "@/components/group/group-form";
 import { ActionSection } from "@/components/shared/action-section";
 import { getCurrencies } from "@/lib/queries/currencies.query";
@@ -15,19 +14,13 @@ export default async function GroupSettingsPage({
 }) {
   const { groupId } = await params;
   const [group, currencies] = await Promise.all([
-    getGroupById(groupId),
+    getGroupSettings(groupId),
     getCurrencies(),
   ]);
 
   if (!group) {
     notFound();
   }
-
-  const currentUserId = await getCurrentUserId();
-  const callerMembership = group.members.find(
-    (member) => member.userId === currentUserId && member.isActive,
-  );
-  const isOwner = callerMembership?.role === "OWNER";
 
   const updateGroupWithId = updateGroup.bind(null, groupId);
 
@@ -48,7 +41,7 @@ export default async function GroupSettingsPage({
         />
       </div>
 
-      {isOwner && (
+      {group.isOwner && (
         <div className="w-full">
           <p className="mb-3 text-sm text-muted-foreground">Danger zone</p>
           <ActionSection

@@ -16,7 +16,7 @@ export default async function JoinPage({
   }
 
   if (data.alreadyMember) {
-    redirect(`/groups/${data.group.id}`);
+    redirect(`/groups/${data.group.id}/expenses`);
   }
 
   return (

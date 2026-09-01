@@ -15,7 +15,7 @@ export function GroupCard({
   expenseCount,
 }: GroupCardProps) {
   return (
-    <Link href={`/groups/${id}`}>
+    <Link href={`/groups/${id}/expenses`}>
       <div className="flex w-full items-center justify-between gap-4 rounded-2xl border bg-card p-6 hover:bg-muted sm:rounded-[20px] xl:gap-6">
         <div className="flex min-w-0 flex-1 flex-col items-start gap-2">
           <h2 className="w-full truncate text-xl font-semibold first-letter:uppercase">

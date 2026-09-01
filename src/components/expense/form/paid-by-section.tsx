@@ -26,7 +26,7 @@ interface PaidBySectionProps {
 
 export function PaidBySection({ name, total, currency }: PaidBySectionProps) {
   const { getValues, setValue } = useFormContext();
-  const { activeMembers } = useMembers();
+  const { members } = useMembers();
 
   const readPayers = (): AllocationData[] => getValues(name) ?? [];
 
@@ -36,7 +36,7 @@ export function PaidBySection({ name, total, currency }: PaidBySectionProps) {
       : "single",
   );
 
-  const memberOptions = activeMembers.map((member) => {
+  const memberOptions = members.map((member) => {
     const displayName = member.name;
 
     return {

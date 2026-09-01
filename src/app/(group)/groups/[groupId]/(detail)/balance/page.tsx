@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { getGroupById } from "@/lib/queries/group.query";
+import { getGroupSummary, getGroupMembers } from "@/lib/queries/group.query";
 import {
   BalanceChartCard,
   type BalanceChartDatum,
@@ -18,12 +18,13 @@ export default async function GroupBalancePage({
   params: Promise<{ groupId: string }>;
 }) {
   const { groupId } = await params;
-  const [group, ledger] = await Promise.all([
-    getGroupById(groupId),
+  const [group, members, ledger] = await Promise.all([
+    getGroupSummary(groupId),
+    getGroupMembers(groupId),
     getGroupLedger(groupId),
   ]);
 
-  if (!group) {
+  if (!group || !members) {
     notFound();
   }
 
@@ -34,11 +35,9 @@ export default async function GroupBalancePage({
     ]),
   );
 
-  const nameById = new Map(
-    group.members.map((member) => [member.id, member.name]),
-  );
+  const nameById = new Map(members.map((member) => [member.id, member.name]));
 
-  const chartData: BalanceChartDatum[] = group.members.map((member) => ({
+  const chartData: BalanceChartDatum[] = members.map((member) => ({
     memberId: member.id,
     name: member.name,
     balanceInCents: balances.get(member.id) ?? 0,

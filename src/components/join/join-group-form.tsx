@@ -99,7 +99,7 @@ export function JoinGroupForm({
       const result = await joinGroup(inviteCode, selectedMemberId);
 
       if (result.success && result.groupId) {
-        router.push(`/groups/${result.groupId}`);
+        router.push(`/groups/${result.groupId}/expenses`);
         router.refresh();
       } else {
         setError(result.error ?? "Failed to join group");

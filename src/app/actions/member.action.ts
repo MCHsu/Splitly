@@ -13,6 +13,13 @@ import { handleError } from "@/lib/utils";
 import { getCurrentUserId } from "@/lib/queries/auth.query";
 import { getMemberLedger } from "@/lib/queries/ledger.query";
 
+function revalidateGroupPaths(groupId: string) {
+  revalidatePath(`/groups/${groupId}/expenses`);
+  revalidatePath(`/groups/${groupId}/balance`);
+  revalidatePath(`/groups/${groupId}/members`);
+  revalidatePath(`/groups/${groupId}/group`);
+}
+
 type ActionResult = {
   success: boolean;
   error?: string;
@@ -76,7 +83,7 @@ export async function joinGroup(
         },
       });
 
-      revalidatePath(`/groups/${group.id}`);
+      revalidateGroupPaths(group.id);
       revalidatePath("/groups");
 
       return { success: true, groupId: group.id };
@@ -99,7 +106,7 @@ export async function joinGroup(
       return { success: false, error: "This name is no longer available" };
     }
 
-    revalidatePath(`/groups/${group.id}`);
+    revalidateGroupPaths(group.id);
     revalidatePath("/groups");
 
     return { success: true, groupId: group.id };
@@ -144,7 +151,7 @@ export async function addVirtualMember(
       },
     });
 
-    revalidatePath(`/groups/${groupId}`);
+    revalidatePath(`/groups/${groupId}/members`);
     refresh();
 
     return { success: true, groupId };
@@ -194,7 +201,7 @@ export async function deleteMember(
   try {
     await prisma.groupMember.delete({ where: { id: memberId } });
 
-    revalidatePath(`/groups/${groupId}`);
+    revalidatePath(`/groups/${groupId}/members`);
     refresh();
 
     return { success: true, groupId };
@@ -250,7 +257,7 @@ export async function deactivateMember(
       data: { isActive: false, updatedById: currentUserId },
     });
 
-    revalidatePath(`/groups/${groupId}`);
+    revalidatePath(`/groups/${groupId}/members`);
     refresh();
 
     return { success: true, groupId };
@@ -297,7 +304,7 @@ export async function leaveGroup(groupId: string): Promise<ActionResult> {
       data: { isActive: false, updatedById: currentUserId },
     });
 
-    revalidatePath(`/groups/${groupId}`);
+    revalidatePath(`/groups/${groupId}/members`);
     revalidatePath("/groups");
     refresh();
 
@@ -356,7 +363,7 @@ export async function updateGroupMembers(
       });
     }
 
-    revalidatePath(`/groups/${groupId}`);
+    revalidatePath(`/groups/${groupId}/members`);
     refresh();
 
     return { success: true };

@@ -109,7 +109,6 @@ export async function updateGroup(groupId: string, formData: GroupFormData) {
     });
 
     revalidatePath("/groups");
-    revalidatePath(`/groups/${groupId}`);
     revalidatePath(`/groups/${groupId}/group`);
     revalidatePath(`/groups/${groupId}/expenses`);
 

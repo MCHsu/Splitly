@@ -20,7 +20,7 @@ export function AllocationEditor({
   label,
   currency,
 }: AllocationEditorProps) {
-  const { activeMembers } = useMembers();
+  const { members } = useMembers();
   const { rows, toggle, setAmount, selectedTotal } = useAllocationField(
     name,
     total,
@@ -29,9 +29,7 @@ export function AllocationEditor({
   return (
     <div className="w-full space-y-6 rounded-xl border bg-muted p-4 md:p-6 lg:p-10">
       {rows.map((row, index) => {
-        const memberData = activeMembers.find(
-          (member) => member.id === row.memberId,
-        );
+        const memberData = members.find((member) => member.id === row.memberId);
 
         if (!memberData) return null;
 
