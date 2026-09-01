@@ -70,6 +70,9 @@ model GroupMember {
   settlementsFrom Settlement[] @relation("SettlementFrom")
   settlementsTo   Settlement[] @relation("SettlementTo")
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   createdById String
   updatedById String
 
@@ -85,7 +88,7 @@ model Expense {
   amountInCents Int @map("amount")
   date        DateTime
   note        String?
-  category    String? 
+  category    String 
   receiptUrl  String? 
 
   groupId String
