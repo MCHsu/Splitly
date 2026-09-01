@@ -20,14 +20,15 @@ export function RegisterStep({ methods, onSubmit }: RegisterStepProps) {
           <div className="flex flex-col gap-4">
             <InputField
               name="name"
-              label="Name"
+              label="Display name"
               type="text"
               placeholder="Your name"
             />
             <PasswordField
               name="password"
               label="Password"
-              placeholder="At least 8 characters"
+              placeholder="At least 8 characters long"
+              description="Letter, number & symbol required"
             />
             <PasswordField
               name="confirmPassword"

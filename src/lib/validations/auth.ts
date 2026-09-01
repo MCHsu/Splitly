@@ -27,11 +27,11 @@ export const signUpFormSchema = z
     password: z
       .string()
       .min(8, { error: "Be at least 8 characters long" })
-      // .regex(/[a-zA-Z]/, { error: "Contain at least one letter." })
+      .regex(/[a-zA-Z]/, { error: "Contain at least one letter." })
       .regex(/[0-9]/, { error: "Contain at least one number." })
-      // .regex(/[^a-zA-Z0-9]/, {
-      //   error: "Contain at least one special character.",
-      // })
+      .regex(/[^a-zA-Z0-9]/, {
+        error: "Contain at least one special character.",
+      })
       .trim(),
     confirmPassword: z.string().min(1, "Please confirm your password"),
   })
