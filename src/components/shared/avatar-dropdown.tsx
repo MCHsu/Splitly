@@ -19,9 +19,27 @@ import {
 import { signOut } from "@/lib/auth-client";
 import { useUser } from "@/providers/user-provider";
 
+function GuestIdentityRow() {
+  return (
+    <SidebarMenu>
+      <SidebarMenuItem>
+        <SidebarMenuButton size="lg" className="pointer-events-none">
+          <UserAvatar name="Guest" />
+          <div className="grid flex-1 text-left text-sm leading-tight">
+            <span className="truncate font-medium">Guest</span>
+            <span className="truncate text-xs text-muted-foreground">
+              Not signed in
+            </span>
+          </div>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+    </SidebarMenu>
+  );
+}
+
 export function AvatarDropdown() {
   const { isMobile } = useSidebar();
-  const { user } = useUser();
+  const { user, isAnonymous } = useUser();
   const router = useRouter();
 
   const handleSignOut = () => {
@@ -29,11 +47,14 @@ export function AvatarDropdown() {
     router.push("/auth");
   };
 
+  if (isAnonymous) {
+    return <GuestIdentityRow />;
+  }
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          {/* Dropdown trigger */}
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
@@ -48,7 +69,6 @@ export function AvatarDropdown() {
             </SidebarMenuButton>
           </DropdownMenuTrigger>
 
-          {/* Dropdown content */}
           <DropdownMenuContent
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
             side={isMobile ? "bottom" : "top"}

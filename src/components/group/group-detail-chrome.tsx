@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 
-import { GroupDetailMobileCta } from "@/components/group/group-detail-mobile-cta";
 import { GroupDetailTabs } from "@/components/group/group-detail-tabs";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
@@ -23,7 +22,7 @@ export function GroupDetailChrome({
         showBackButton={false}
         title={groupName}
         actions={
-          <Button asChild className="hidden md:inline-flex">
+          <Button asChild className="w-full md:w-auto">
             <Link href={`/groups/${groupId}/expenses/new`}>
               <Plus />
               New Expense
@@ -36,8 +35,6 @@ export function GroupDetailChrome({
         <GroupDetailTabs groupId={groupId} />
         <div>{children}</div>
       </div>
-
-      <GroupDetailMobileCta groupId={groupId} />
     </div>
   );
 }

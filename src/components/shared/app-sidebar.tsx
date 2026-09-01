@@ -6,40 +6,47 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import { AvatarDropdown } from "@/components/shared/avatar-dropdown";
+import { GuestAuthCta } from "@/components/shared/guest-auth-cta";
 import { LogoText } from "@/components/shared/logo-text";
+import { getAuthSession } from "@/lib/queries/auth.query";
 
-const items = [
+const allNavItems = [
   {
     title: "New Group",
     url: "/groups/new",
     icon: Plus,
+    guestHidden: true,
   },
   {
     title: "My Groups",
     url: "/groups",
     icon: Users,
+    guestHidden: false,
   },
-];
+] as const;
 
-export function AppSidebar() {
+export async function AppSidebar() {
+  const session = await getAuthSession();
+  const isGuest = Boolean(session?.user?.isAnonymous);
+
+  const navItems = allNavItems.filter((item) => !isGuest || !item.guestHidden);
+
   return (
     <Sidebar>
       <SidebarHeader className="pb4 px-4 pt-6">
         <LogoText />
       </SidebarHeader>
-      {/* Sidebar content */}
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
+              {navItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <a href={item.url}>
@@ -54,13 +61,9 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      {/* Sidebar footer */}
-      <SidebarFooter>
-        {/* <SidebarMenu>
-          <SidebarMenuItem> */}
+      <SidebarFooter className="gap-3 p-2">
+        {isGuest ? <GuestAuthCta /> : null}
         <AvatarDropdown />
-        {/* </SidebarMenuItem>
-        </SidebarMenu> */}
       </SidebarFooter>
     </Sidebar>
   );

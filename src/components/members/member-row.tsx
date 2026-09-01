@@ -1,15 +1,15 @@
 "use client";
 
-import { Trash2 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { BadgeCheck, BadgeQuestionMark, Trash2 } from "lucide-react";
 
 import {
   getMemberDisplayName,
   getMemberKind,
-  MEMBER_KIND_ICON,
   MEMBER_KIND_LABEL,
-  type GroupMemberWithUser,
   type MemberKind,
-} from "@/lib/member";
+} from "@/lib/domain/member";
+import type { GroupMemberWithUser } from "@/types/member";
 import { cn } from "@/lib/utils";
 import { UserAvatar } from "@/components/shared/user-avatar";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,12 @@ import {
 
 const PILL_CLASS =
   "mt-0.5 inline-flex rounded-lg px-1.5 py-0.5 text-xs font-medium";
+
+const MEMBER_KIND_ICON: Partial<Record<MemberKind, LucideIcon>> = {
+  owner: BadgeCheck,
+  linked: BadgeCheck,
+  anonymous: BadgeQuestionMark,
+};
 
 const MEMBER_KIND_BADGE_CLASS: Record<MemberKind, string> = {
   owner: cn(PILL_CLASS, "bg-primary/10 text-primary"),

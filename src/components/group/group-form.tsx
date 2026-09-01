@@ -9,7 +9,7 @@ import { SelectField } from "@/components/shared/form/select-field";
 import { TextareaField } from "@/components/shared/form/textarea-field";
 import { FormLayout } from "@/components/shared/form/form-layout";
 import { SectionContainer } from "@/components/shared/section-container";
-import type { CurrencyItem } from "@/lib/currencies";
+import type { CurrencyItem } from "@/types/currency";
 
 interface GroupFormProps {
   mode?: "add" | "edit";

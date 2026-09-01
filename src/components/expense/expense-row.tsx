@@ -5,7 +5,7 @@ import {
   getExpenseCategory,
 } from "@/lib/constants/expense-categories";
 import { formatMoneyFromCents } from "@/lib/money";
-import type { GroupMemberWithUser } from "@/lib/member";
+import type { GroupMemberWithUser } from "@/types/member";
 import { cn } from "@/lib/utils";
 import type { ExpenseListItem } from "@/types/expense";
 
@@ -24,17 +24,15 @@ export function ExpenseRow({
   currentUserId,
   currency = "TWD",
 }: ExpenseRowProps) {
-  const payments = expense.payments ?? [];
   const paidByText =
-    payments.length === 1
-      ? payments[0].member.name
-      : `${payments.length} people`;
+    expense.payments.length === 1
+      ? expense.payments[0].member.name
+      : `${expense.payments.length} people`;
 
-  const paidTotal =
-    payments.length === 1 ? payments[0].amountInCents : expense.amountInCents;
+  const paidTotal = expense.amountInCents;
 
   const myShare = currentUserId
-    ? expense.shares?.find(
+    ? expense.shares.find(
         (share) =>
           share.member.userId === currentUserId ||
           members?.find((m) => m.id === share.member.id)?.userId ===

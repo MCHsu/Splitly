@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useForm, SubmitHandler, type Resolver } from "react-hook-form";
+import { useForm, SubmitHandler, useWatch, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { SectionContainer } from "@/components/shared/section-container";
@@ -14,6 +14,7 @@ import { TextareaField } from "@/components/shared/form/textarea-field";
 import { CategoryField } from "@/components/shared/form/category-field";
 import { PaidBySection } from "@/components/expense/form/paid-by-section";
 import { SplitMethodSection } from "@/components/expense/form/split-method-section";
+import { isExpenseFormUnchanged } from "@/lib/domain/expense-form-values";
 import { expenseFormSchema, ExpenseFormData } from "@/lib/validations/expense";
 
 import { useGroup } from "@/providers/group-provider";
@@ -66,18 +67,24 @@ export function ExpenseForm({
     };
   }, [activeMembers, currentUser?.id]);
 
+  const baselineValues = defaultValues ?? initialValues;
+
   const methods = useForm<ExpenseFormData>({
     resolver: zodResolver(expenseFormSchema) as Resolver<ExpenseFormData>,
-    defaultValues: defaultValues ?? initialValues,
+    defaultValues: baselineValues,
   });
 
   const {
+    control,
     formState: { isSubmitting },
     getValues,
   } = methods;
 
+  const values = useWatch({ control }) as ExpenseFormData;
+  const isSubmitDisabled =
+    mode === "edit" && isExpenseFormUnchanged(values, baselineValues);
+
   const actionText = mode === "edit" ? "Update" : "Create";
-  console.log("onSubmit", getValues());
   const onSubmit: SubmitHandler<ExpenseFormData> = async (data) => {
     await onSubmitProp(data);
   };
@@ -137,6 +144,7 @@ export function ExpenseForm({
           cancelHref={cancelHref}
           submitText={actionText}
           isSubmitting={isSubmitting}
+          isSubmitDisabled={isSubmitDisabled}
         />
       </FormLayout>
     </SectionContainer>

@@ -1,7 +1,7 @@
 import { ExpenseRow } from "@/components/expense/expense-row";
 import { formatDate } from "@/lib/date";
 import { SectionContainer } from "@/components/shared/section-container";
-import type { GroupMemberWithUser } from "@/lib/member";
+import type { GroupMemberWithUser } from "@/types/member";
 import type { ExpenseListItem } from "@/types/expense";
 
 interface ExpenseListProps {

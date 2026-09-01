@@ -7,8 +7,8 @@ import { TabbedFieldGroup } from "@/components/shared/form/tabbed-field-group";
 import { SelectField } from "@/components/shared/form/select-field";
 import { AllocationEditor } from "@/components/expense/form/allocation-editor";
 import { UserAvatar } from "@/components/shared/user-avatar";
-import { assignAllToOne } from "@/lib/allocation";
-import { getMemberDisplayName } from "@/lib/member";
+import { assignAllToOne } from "@/lib/domain/allocation";
+import { getMemberDisplayName } from "@/lib/domain/member";
 import type { AllocationData } from "@/lib/validations/expense";
 import { useMembers } from "@/providers/member-provider";
 

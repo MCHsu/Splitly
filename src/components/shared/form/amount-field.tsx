@@ -12,6 +12,7 @@ import {
   DEFAULT_LOCALE,
   MONEY_DECIMAL_PLACES,
 } from "@/lib/money";
+import { cn } from "@/lib/utils";
 
 interface AmountFieldProps<T extends FieldValues> extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -60,7 +61,7 @@ export function AmountField<T extends FieldValues>({
       return (
         <BaseInput
           {...inputProps}
-          className="tabular-nums"
+          className={cn("tabular-nums", inputProps.className)}
           prefix={<InputGroupText>{symbol}</InputGroupText>}
         />
       );

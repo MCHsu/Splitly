@@ -1,8 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useMemo } from "react";
-import type { GroupMemberWithUser } from "@/lib/member";
-import { useUser } from "@/providers/user-provider";
+import type { GroupMemberWithUser } from "@/types/member";
 
 interface MembersContextData {
   members: GroupMemberWithUser[];
@@ -17,20 +16,13 @@ interface MembersProviderProps {
 }
 
 export function MembersProvider({ children, members }: MembersProviderProps) {
-  const { user } = useUser();
-
-  const membersContextData: MembersContextData = useMemo(() => {
-    const sorted = [...members].sort((a, b) => {
-      if (user && a.userId === user.id) return -1;
-      if (user && b.userId === user.id) return 1;
-      return a.name.localeCompare(b.name);
-    });
-
-    return {
-      members: sorted,
-      activeMembers: sorted.filter((m) => m.isActive),
-    };
-  }, [members, user]);
+  const membersContextData: MembersContextData = useMemo(
+    () => ({
+      members,
+      activeMembers: members.filter((m) => m.isActive),
+    }),
+    [members],
+  );
 
   return <MembersContext value={membersContextData}>{children}</MembersContext>;
 }

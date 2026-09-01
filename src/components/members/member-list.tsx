@@ -7,7 +7,7 @@ import { deleteMember } from "@/app/actions/member.action";
 import { MemberRow } from "@/components/members/member-row";
 import { SectionContainer } from "@/components/shared/section-container";
 import { StatusMessage } from "@/components/shared/status-message";
-import type { GroupMemberWithUser } from "@/lib/member";
+import type { GroupMemberWithUser } from "@/types/member";
 
 interface MemberListProps {
   groupId: string;
@@ -15,17 +15,6 @@ interface MemberListProps {
   hasFinancialRecords: Record<string, boolean>;
   callerMembership: GroupMemberWithUser;
   currentUserId: string;
-}
-
-function sortMembers(
-  members: GroupMemberWithUser[],
-  currentUserId: string,
-): GroupMemberWithUser[] {
-  return [...members].sort((a, b) => {
-    if (a.userId === currentUserId) return -1;
-    if (b.userId === currentUserId) return 1;
-    return a.name.localeCompare(b.name);
-  });
 }
 
 export function MemberList({
@@ -40,7 +29,6 @@ export function MemberList({
   const [error, setError] = useState<string | null>(null);
 
   const isOwner = callerMembership.role === "OWNER";
-  const sorted = sortMembers(members, currentUserId);
 
   const handleDelete = (memberId: string) => {
     setError(null);
@@ -59,7 +47,7 @@ export function MemberList({
       {error && <StatusMessage tone="error">{error}</StatusMessage>}
 
       <SectionContainer className="divide-y">
-        {sorted.map((member) => {
+        {members.map((member) => {
           const isSelf = member.userId === currentUserId;
           const canDelete = isOwner && member.role !== "OWNER" && !isSelf;
 

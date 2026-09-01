@@ -8,7 +8,7 @@ import {
   setRowAmount,
   sumManualCents,
   toggleRow,
-} from "@/lib/allocation";
+} from "@/lib/domain/allocation";
 import { fromCents, sumSelectedCents } from "@/lib/money";
 import type { AllocationData } from "@/lib/validations/expense";
 

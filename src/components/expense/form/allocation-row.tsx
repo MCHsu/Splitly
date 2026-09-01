@@ -6,7 +6,8 @@ import { useFormContext } from "react-hook-form";
 import { AmountField } from "@/components/shared/form/amount-field";
 import { UserAvatar } from "@/components/shared/user-avatar";
 import { Checkbox } from "@/components/ui/checkbox";
-import { getMemberDisplayName, type GroupMemberWithUser } from "@/lib/member";
+import { getMemberDisplayName } from "@/lib/domain/member";
+import type { GroupMemberWithUser } from "@/types/member";
 import { cn } from "@/lib/utils";
 
 interface AllocationRowProps {
@@ -46,7 +47,7 @@ export function AllocationRow({
 
       <AmountField
         name={amountFieldName}
-        className={cn(isManual ? "text-primary" : "text-muted-foreground")}
+        className={cn(isManual ? "text-foreground" : "text-muted-foreground")}
         placeholder="-"
         disabled={!isSelected}
         currencyCode={currency}
