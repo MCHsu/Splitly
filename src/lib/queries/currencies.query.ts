@@ -1,7 +1,6 @@
-export type CurrencyItem = {
-  code: string;
-  symbol: string;
-};
+import "server-only";
+
+import type { CurrencyItem } from "@/types/currency";
 
 export async function getCurrencies(): Promise<CurrencyItem[]> {
   try {

@@ -1,17 +1,18 @@
+import { formatDate } from "@/lib/date";
+import { distributeEvenly } from "@/lib/domain/split-calculator";
 import { fromCents, toCents } from "@/lib/money";
-import { distributeEvenly } from "@/lib/split-calculator";
 import type {
   AllocationData,
   ExpenseFormData,
 } from "@/lib/validations/expense";
-import type { ExpenseForForm } from "@/types/expense";
+import type { ExpenseAllocationInput, ExpenseForForm } from "@/types/expense";
 
 type MemberRef = { id: string };
 
 export type ExpenseWriteData = {
   amountInCents: number;
-  payments: { memberId: string; amountInCents: number }[];
-  shares: { memberId: string; amountInCents: number }[];
+  payments: ExpenseAllocationInput[];
+  shares: ExpenseAllocationInput[];
 };
 
 /**
@@ -28,9 +29,7 @@ function matchesEqualSplit(
   const expected = distributeEvenly(amountInCents, selected.length).sort(
     (a, b) => a - b,
   );
-  const actual = selected
-    .map((row) => row.amountInCents)
-    .sort((a, b) => a - b);
+  const actual = selected.map((row) => row.amountInCents).sort((a, b) => a - b);
 
   return (
     expected.length === actual.length &&
@@ -85,12 +84,71 @@ export function toExpenseFormValues(
     description: expense.description,
     amount: fromCents(expense.amountInCents),
     date: expense.date,
-    category: expense.category ?? undefined,
+    category: expense.category,
     note: expense.note ?? undefined,
     splitMethod: expense.splitMethod,
     paidBy: toAllocationRows(memberIds, expense.payments, !paymentsAreEqual),
     allocations: toAllocationRows(memberIds, expense.shares, !sharesAreEqual),
   };
+}
+
+function normalizeOptionalString(value: string | undefined) {
+  return value?.trim() || undefined;
+}
+
+function areAllocationsEqual(
+  current: AllocationData[] | undefined,
+  baseline: AllocationData[] | undefined,
+): boolean {
+  if (!current || !baseline) return current === baseline;
+  if (current.length !== baseline.length) return false;
+
+  return current.every((row, index) => {
+    const base = baseline[index];
+
+    return (
+      row.memberId === base.memberId &&
+      row.isSelected === base.isSelected &&
+      toCents(row.amount) === toCents(base.amount)
+    );
+  });
+}
+
+/** Semantic equality for edit-mode submit gating; ignores UI-only fields like isManual. */
+export function isExpenseFormUnchanged(
+  current: Partial<ExpenseFormData> | undefined,
+  baseline: ExpenseFormData,
+): boolean {
+  if (!current) return true;
+
+  if (current.description !== baseline.description) return false;
+  if (current.splitMethod !== baseline.splitMethod) return false;
+  if (toCents(current.amount) !== toCents(baseline.amount)) return false;
+
+  const currentDate = current.date ? formatDate(current.date) : "";
+  const baselineDate = formatDate(baseline.date);
+  if (currentDate !== baselineDate) return false;
+
+  if (
+    normalizeOptionalString(current.category) !==
+    normalizeOptionalString(baseline.category)
+  ) {
+    return false;
+  }
+
+  if (
+    normalizeOptionalString(current.note) !==
+    normalizeOptionalString(baseline.note)
+  ) {
+    return false;
+  }
+
+  if (!areAllocationsEqual(current.paidBy, baseline.paidBy)) return false;
+  if (!areAllocationsEqual(current.allocations, baseline.allocations)) {
+    return false;
+  }
+
+  return true;
 }
 
 export function toExpenseWriteData(data: ExpenseFormData): ExpenseWriteData {

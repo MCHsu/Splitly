@@ -1,4 +1,7 @@
+import "server-only";
+
 import prisma from "@/lib/prisma";
+import { sortGroupMembers } from "@/lib/domain/member";
 import { handleError } from "@/lib/utils";
 import { getCurrentUserId } from "@/lib/queries/auth.query";
 import { getGroupLedger } from "@/lib/queries/ledger.query";
@@ -49,7 +52,7 @@ export async function getJoinPageData(inviteCode: string) {
     const unclaimedMembers = await prisma.groupMember.findMany({
       where: { groupId: group.id, userId: null, isActive: true },
       select: { id: true, name: true },
-      orderBy: { name: "asc" },
+      orderBy: { createdAt: "asc" },
     });
 
     return {
@@ -84,7 +87,7 @@ export async function getMemberManagementData(groupId: string) {
     prisma.groupMember.findMany({
       where: { groupId },
       include: { user: true },
-      orderBy: [{ isActive: "desc" }, { name: "asc" }],
+      orderBy: { createdAt: "asc" },
     }),
     prisma.group.findUnique({
       where: { id: groupId },
@@ -107,7 +110,7 @@ export async function getMemberManagementData(groupId: string) {
   }
 
   return {
-    members,
+    members: sortGroupMembers(members, currentUserId),
     hasFinancialRecords,
     callerMembership,
     currentUserId,

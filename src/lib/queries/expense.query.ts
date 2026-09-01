@@ -1,3 +1,5 @@
+import "server-only";
+
 import { cache } from "react";
 import prisma from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/queries/auth.query";

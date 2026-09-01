@@ -31,7 +31,7 @@ export const expenseFormSchema = z
         "Amount can only have up to two decimal places",
       ),
     date: z.date(),
-    category: z.string().optional(),
+    category: z.string().min(1),
     splitMethod: SplitMethodSchema,
     paidBy: z.array(AllocationSchema).min(1, "At least one payer is required"),
     allocations: z

@@ -21,11 +21,7 @@ export const joinGroupSchema = z.object({
   memberId: z.string().min(1),
 });
 
-export type JoinGroupData = z.infer<typeof joinGroupSchema>;
-
 export const addVirtualMemberSchema = z.object({
   groupId: z.string().min(1),
   name: z.string().min(1, "Name is required"),
 });
-
-export type AddVirtualMemberData = z.infer<typeof addVirtualMemberSchema>;

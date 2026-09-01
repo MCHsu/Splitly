@@ -1,4 +1,4 @@
-import { distributeEvenly } from "@/lib/split-calculator";
+import { distributeEvenly } from "@/lib/domain/split-calculator";
 import { fromCents, toCents } from "@/lib/money";
 import type { AllocationData } from "@/lib/validations/expense";
 

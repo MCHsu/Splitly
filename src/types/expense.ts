@@ -1,47 +1,40 @@
 import type { SplitMethod } from "@/generated/prisma/enums";
 import type { ExpensePartyMember } from "@/types/member";
 
-export type { SplitMethod };
-
-export type ExpensePaymentWithMember = {
+export type ExpensePartyLine = {
   amountInCents: number;
   member: ExpensePartyMember;
 };
 
-export type ExpenseShareWithMember = {
+export type ExpenseAllocationInput = {
   amountInCents: number;
-  member: ExpensePartyMember;
+  memberId: string;
 };
 
-export type ExpenseListItem = {
+type ExpenseCore = {
+  description: string;
+  amountInCents: number;
+  date: Date;
+  category: string;
+};
+
+export type ExpenseListItem = ExpenseCore & {
   id: string;
-  date: Date;
-  description: string;
-  amountInCents: number;
-  category?: string | null;
-  payments?: ExpensePaymentWithMember[];
-  shares?: ExpenseShareWithMember[];
+  payments: ExpensePartyLine[];
+  shares: ExpensePartyLine[];
 };
 
-export type ExpenseDetailData = {
-  description: string;
-  amountInCents: number;
-  date: Date;
-  category: string | null;
-  note: string | null;
+export type ExpenseDetailData = ExpenseCore & {
+  note?: string | null;
   createdAt: Date;
   updatedAt: Date;
-  payments: ExpensePaymentWithMember[];
-  shares: ExpenseShareWithMember[];
+  payments: ExpensePartyLine[];
+  shares: ExpensePartyLine[];
 };
 
-export type ExpenseForForm = {
-  description: string;
-  amountInCents: number;
-  date: Date;
-  category: string | null;
-  note: string | null;
+export type ExpenseForForm = ExpenseCore & {
+  note?: string | null;
   splitMethod: SplitMethod;
-  payments: { amountInCents: number; memberId: string }[];
-  shares: { amountInCents: number; memberId: string }[];
+  payments: ExpenseAllocationInput[];
+  shares: ExpenseAllocationInput[];
 };

@@ -1,8 +1,11 @@
+import "server-only";
+
 import { cache } from "react";
 
 import prisma from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma/client";
 import { handleError } from "@/lib/utils";
+import { sortGroupMembers } from "@/lib/domain/member";
 import { getCurrentUserId } from "@/lib/queries/auth.query";
 import { getMemberLedger } from "@/lib/queries/ledger.query";
 
@@ -95,7 +98,7 @@ export const getGroupById = cache(
         include: {
           members: {
             include: { user: true },
-            orderBy: [{ isActive: "desc" }, { name: "asc" }],
+            orderBy: { createdAt: "asc" },
           },
           expenses: {
             where: { deletedAt: null },
@@ -113,7 +116,15 @@ export const getGroupById = cache(
           settlements: true,
         },
       });
-      return group;
+
+      if (!group) {
+        return null;
+      }
+
+      return {
+        ...group,
+        members: sortGroupMembers(group.members, currentUserId),
+      };
     } catch (error) {
       handleError(error);
       return null;
