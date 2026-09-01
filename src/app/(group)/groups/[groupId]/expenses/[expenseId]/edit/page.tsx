@@ -5,7 +5,7 @@ import { getExpenseById } from "@/lib/queries/expense.query";
 import { getGroupById } from "@/lib/queries/group.query";
 import { ExpenseForm } from "@/components/expense/form/expense-form";
 import { PageHeader } from "@/components/shared/page-header";
-import { toExpenseFormValues } from "@/lib/expense-form-values";
+import { toExpenseFormValues } from "@/lib/domain/expense-form-values";
 
 export default async function EditExpensePage({
   params,

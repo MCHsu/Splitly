@@ -32,29 +32,34 @@ export default async function ExpenseDetailPage({
   return (
     <>
       <PageHeader
-        // showBackButton
         actions={
-          <>
+          <div className="grid w-full grid-cols-2 gap-3 md:w-auto">
             <form action={deleteExpenseWithId}>
-              <Button type="submit" variant="destructive">
+              <Button
+                type="submit"
+                variant="destructive"
+                className="w-full md:w-32"
+              >
                 <Trash2 />
-                {/* Delete */}
+                Delete
               </Button>
             </form>
-            <Button asChild>
+            <Button asChild className="w-full md:w-32">
               <Link href={`/groups/${groupId}/expenses/${expenseId}/edit`}>
                 <Pencil />
                 Edit
               </Link>
             </Button>
-          </>
+          </div>
         }
       />
-      <ExpenseDetail
-        expense={expense}
-        currency={expense.group.currency}
-        currentUserId={currentUserId}
-      />
+      <div className="pb-20 md:pb-0">
+        <ExpenseDetail
+          expense={expense}
+          currency={expense.group.currency}
+          currentUserId={currentUserId}
+        />
+      </div>
     </>
   );
 }

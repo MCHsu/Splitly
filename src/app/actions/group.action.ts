@@ -25,6 +25,13 @@ export async function createGroup(formData: GroupFormData) {
     throw new Error("User must be authenticated to create a group");
   }
 
+  if (currentUser.isAnonymous) {
+    return {
+      success: false as const,
+      error: "Sign in to create a group",
+    };
+  }
+
   const currentUserId = currentUser.id;
   const currentUserName = currentUser.name;
 

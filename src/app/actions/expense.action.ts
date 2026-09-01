@@ -7,7 +7,7 @@ import prisma from "@/lib/prisma";
 import { handleError } from "@/lib/utils";
 import { ExpenseFormData, expenseFormSchema } from "@/lib/validations/expense";
 import { getCurrentUserId } from "@/lib/queries/auth.query";
-import { toExpenseWriteData } from "@/lib/expense-form-values";
+import { toExpenseWriteData } from "@/lib/domain/expense-form-values";
 
 export async function createExpense(
   groupId: string,
@@ -35,7 +35,7 @@ export async function createExpense(
         description,
         amountInCents,
         date,
-        category: category || null,
+        category,
         note,
         groupId,
         splitMethod,
@@ -104,17 +104,17 @@ export async function updateExpense(
   );
 
   try {
-    await prisma.$transaction(async (tx) => {
-      await tx.expensePayment.deleteMany({ where: { expenseId } });
-      await tx.expenseShare.deleteMany({ where: { expenseId } });
+    await prisma.$transaction(async (transaction) => {
+      await transaction.expensePayment.deleteMany({ where: { expenseId } });
+      await transaction.expenseShare.deleteMany({ where: { expenseId } });
 
-      await tx.expense.update({
+      await transaction.expense.update({
         where: { id: expenseId },
         data: {
           description,
           amountInCents,
           date,
-          category: category || null,
+          category,
           note,
           splitMethod,
           updatedById: currentUserId,

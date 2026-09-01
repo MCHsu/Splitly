@@ -6,7 +6,7 @@ import { getCurrentUserId } from "@/lib/queries/auth.query";
 import { getGroupById } from "@/lib/queries/group.query";
 import { GroupForm } from "@/components/group/group-form";
 import { ActionSection } from "@/components/shared/action-section";
-import { getCurrencies } from "@/lib/currencies";
+import { getCurrencies } from "@/lib/queries/currencies.query";
 
 export default async function GroupSettingsPage({
   params,

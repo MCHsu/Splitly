@@ -10,8 +10,8 @@ import {
   type SuggestedTransfer,
 } from "@/components/balance/suggested-transfers-card";
 import { getGroupLedger } from "@/lib/queries/ledger.query";
-import { getMemberDisplayName } from "@/lib/member";
-import { computeMinTransfers } from "@/lib/settlement";
+import { getMemberDisplayName } from "@/lib/domain/member";
+import { computeMinTransfers } from "@/lib/domain/settlement";
 
 export default async function GroupBalancePage({
   params,
