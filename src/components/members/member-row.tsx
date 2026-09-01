@@ -4,7 +4,6 @@ import type { LucideIcon } from "lucide-react";
 import { BadgeCheck, BadgeQuestionMark, Trash2 } from "lucide-react";
 
 import {
-  getMemberDisplayName,
   getMemberKind,
   MEMBER_KIND_LABEL,
   type MemberKind,
@@ -54,7 +53,7 @@ export function MemberRow({
 }: MemberRowProps) {
   const kind = getMemberKind(member);
   const KindIcon = MEMBER_KIND_ICON[kind];
-  const displayName = getMemberDisplayName(member);
+  const displayName = member.name;
 
   return (
     <div className="flex items-center justify-between gap-4 py-4">

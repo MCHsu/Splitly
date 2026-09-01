@@ -8,7 +8,6 @@ import { SelectField } from "@/components/shared/form/select-field";
 import { AllocationEditor } from "@/components/expense/form/allocation-editor";
 import { UserAvatar } from "@/components/shared/user-avatar";
 import { assignAllToOne } from "@/lib/domain/allocation";
-import { getMemberDisplayName } from "@/lib/domain/member";
 import type { AllocationData } from "@/lib/validations/expense";
 import { useMembers } from "@/providers/member-provider";
 
@@ -38,7 +37,7 @@ export function PaidBySection({ name, total, currency }: PaidBySectionProps) {
   );
 
   const memberOptions = activeMembers.map((member) => {
-    const displayName = getMemberDisplayName(member);
+    const displayName = member.name;
 
     return {
       value: member.id,

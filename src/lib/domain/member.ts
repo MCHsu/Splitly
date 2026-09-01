@@ -22,14 +22,6 @@ export function sortGroupMembers<T extends SortableMember>(
 
 export type MemberKind = "owner" | "linked" | "anonymous" | "unclaimed";
 
-export const getMemberDisplayName = (member: GroupMemberWithUser) => {
-  if (member.user && !member.user.isAnonymous) {
-    return member.user.name;
-  }
-
-  return member.name;
-};
-
 export function getMemberKind(member: GroupMemberWithUser): MemberKind {
   if (member.role === "OWNER") {
     return "owner";

@@ -10,7 +10,6 @@ import {
   type SuggestedTransfer,
 } from "@/components/balance/suggested-transfers-card";
 import { getGroupLedger } from "@/lib/queries/ledger.query";
-import { getMemberDisplayName } from "@/lib/domain/member";
 import { computeMinTransfers } from "@/lib/domain/settlement";
 
 export default async function GroupBalancePage({
@@ -36,12 +35,12 @@ export default async function GroupBalancePage({
   );
 
   const nameById = new Map(
-    group.members.map((member) => [member.id, getMemberDisplayName(member)]),
+    group.members.map((member) => [member.id, member.name]),
   );
 
   const chartData: BalanceChartDatum[] = group.members.map((member) => ({
     memberId: member.id,
-    name: getMemberDisplayName(member),
+    name: member.name,
     balanceInCents: balances.get(member.id) ?? 0,
   }));
 

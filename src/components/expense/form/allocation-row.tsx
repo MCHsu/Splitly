@@ -6,7 +6,6 @@ import { useFormContext } from "react-hook-form";
 import { AmountField } from "@/components/shared/form/amount-field";
 import { UserAvatar } from "@/components/shared/user-avatar";
 import { Checkbox } from "@/components/ui/checkbox";
-import { getMemberDisplayName } from "@/lib/domain/member";
 import type { GroupMemberWithUser } from "@/types/member";
 import { cn } from "@/lib/utils";
 
@@ -31,7 +30,7 @@ export function AllocationRow({
 }: AllocationRowProps) {
   const { getValues } = useFormContext();
   const valueOnFocus = useRef<string | number | null>(null);
-  const displayName = getMemberDisplayName(member);
+  const displayName = member.name;
 
   return (
     <div className="flex items-center gap-4">
