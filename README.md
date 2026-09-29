@@ -4,7 +4,7 @@
 
 ![hero](docs/images/readme_hero.png)
 
-<h3 align="center">✨ <a href="(https://splitly-site.vercel.app/ " target="_blank">Live Demo</a></h3>
+<h3 align="center">✨ <a href="https://splitly-site.vercel.app/" target="_blank">Live Demo</a></h3>
 
 <p align="center">Best viewed in Chrome</p>
 
