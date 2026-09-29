@@ -1,6 +1,5 @@
 import type { GroupMemberRole, SplitMethod } from "@/generated/prisma/client";
-
-export type LinkedUser = "alex" | "emily";
+import type { LinkedUser } from "./users";
 
 export type MemberSeed = {
   id: string;
@@ -33,8 +32,6 @@ export type GroupSeed = {
   members: MemberSeed[];
   expenses: ExpenseSeed[];
 };
-
-export type SeedUserIds = Record<LinkedUser, string>;
 
 export function equalShares(
   amountInCents: number,

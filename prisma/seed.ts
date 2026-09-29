@@ -7,27 +7,18 @@ import { officeLunchGroup } from "./seed/data/office-lunch";
 import { roommatesGroup } from "./seed/data/roommates";
 import { weekendGetawayGroup } from "./seed/data/weekend-getaway";
 import { seedGroup } from "./seed/seed-group";
+import {
+  SEED_USERS,
+  type LinkedUser,
+  type SeedUser,
+  type SeedUserIds,
+} from "./seed/users";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
 });
 
 const prisma = new PrismaClient({ adapter });
-
-const SEED_USERS = [
-  {
-    name: "Alex",
-    email: process.env.SEED_ALEX_EMAIL ?? "alex123@example.com",
-    password: process.env.SEED_ALEX_PASSWORD ?? "User#Alex123",
-  },
-  {
-    name: "Emily",
-    email: process.env.SEED_EMILY_EMAIL ?? "emily456@example.com",
-    password: process.env.SEED_EMILY_PASSWORD ?? "User#Emily456",
-  },
-] as const;
-
-type SeedUser = (typeof SEED_USERS)[number];
 
 const GROUPS = [
   weekendGetawayGroup,
@@ -75,9 +66,14 @@ async function clearSeedData() {
 async function main() {
   await clearSeedData();
 
-  const alex = await getOrCreateSeedUser(SEED_USERS[0]);
-  const emily = await getOrCreateSeedUser(SEED_USERS[1]);
-  const userIds = { alex: alex.id, emily: emily.id };
+  const userIds = Object.fromEntries(
+    await Promise.all(
+      (Object.keys(SEED_USERS) as LinkedUser[]).map(async (key) => {
+        const user = await getOrCreateSeedUser(SEED_USERS[key]);
+        return [key, user.id] as const;
+      }),
+    ),
+  ) as SeedUserIds;
 
   for (const group of GROUPS) {
     await seedGroup(prisma, group, userIds);

@@ -1,10 +1,13 @@
 import type { PrismaClient } from "@/generated/prisma/client";
-import type { GroupSeed, SeedUserIds } from "./types";
+import type { GroupSeed } from "./types";
+import type { SeedUserIds } from "./users";
 
 function getOwnerUserId(group: GroupSeed, userIds: SeedUserIds): string {
   const owner = group.members.find((member) => member.role === "OWNER");
   if (!owner?.linkedUser) {
-    throw new Error(`Group "${group.name}" is missing an owner with linkedUser.`);
+    throw new Error(
+      `Group "${group.name}" is missing an owner with linkedUser.`,
+    );
   }
 
   return userIds[owner.linkedUser];
