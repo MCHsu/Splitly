@@ -16,8 +16,7 @@ import {
   SidebarMenuButton,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { signOut } from "@/lib/auth-client";
-import { useUser } from "@/providers/user-provider";
+import { signOut, useSession } from "@/lib/auth-client";
 
 function GuestIdentityRow() {
   return (
@@ -39,7 +38,9 @@ function GuestIdentityRow() {
 
 export function AvatarDropdown() {
   const { isMobile } = useSidebar();
-  const { user, isAnonymous } = useUser();
+  const { data: session } = useSession();
+  const user = session?.user ?? null;
+  const isAnonymous = !!user?.isAnonymous;
   const router = useRouter();
 
   const handleSignOut = () => {

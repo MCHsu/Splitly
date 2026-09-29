@@ -22,8 +22,8 @@ import { SplitMethodSection } from "@/components/expense/form/split-method-secti
 import { isExpenseFormUnchanged } from "@/lib/domain/expense-form-values";
 import { expenseFormSchema, ExpenseFormData } from "@/lib/validations/expense";
 
+import { useSession } from "@/lib/auth-client";
 import { useMembers } from "@/providers/member-provider";
-import { useUser } from "@/providers/user-provider";
 
 interface ExpenseFormProps {
   currency: string;
@@ -43,10 +43,11 @@ export function ExpenseForm({
   cancelHref,
 }: ExpenseFormProps) {
   const { members } = useMembers();
-  const { user } = useUser();
+  const { data: session } = useSession();
 
   const currentUser =
-    members.find((member) => member.userId === user?.id) ?? members[0];
+    members.find((member) => member.userId === session?.user?.id) ??
+    members[0];
 
   // Every member gets a row in both lists; `isSelected` decides who is actually involved.
   const initialValues = useMemo<ExpenseFormData>(() => {

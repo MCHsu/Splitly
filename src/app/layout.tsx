@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import { UserProvider } from "@/providers/user-provider";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -24,7 +23,7 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${plusJakartaSans.className} antialiased`}
       >
-        <UserProvider>{children}</UserProvider>
+        {children}
       </body>
     </html>
   );
